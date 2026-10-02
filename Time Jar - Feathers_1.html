@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+
+
+<helmet>
+  <link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <style>
+    body { margin: 0; }
+    @keyframes timeModalIn { 0% { opacity: 0; transform: scale(0.92) translateY(10px); filter: blur(8px); } 100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); } }
+  </style>
+</helmet>
+<div ref="{{pageRef}}" style="width:100%;min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;background:#f0e8da;isolation:isolate;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;overflow:auto;position:relative">
+  <sc-if value="{{showBackdrop}}" hint-placeholder-val="{{true}}">
+    <div aria-hidden="true" style="position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;background:radial-gradient(ellipse 60% 50% at 18% 22%, rgba(196,186,172,0.5), rgba(196,186,172,0) 70%), radial-gradient(ellipse 55% 45% at 85% 30%, rgba(178,186,196,0.42), rgba(178,186,196,0) 70%), radial-gradient(ellipse 60% 50% at 78% 85%, rgba(232,214,184,0.55), rgba(232,214,184,0) 70%), radial-gradient(ellipse 55% 45% at 12% 88%, rgba(200,190,176,0.42), rgba(200,190,176,0) 70%), #f0e8da">
+      <div style="position:absolute;inset:-60px;filter:blur(8px) saturate(0.5) sepia(0.18);opacity:0.5">
+        <img src="./assets/feather_2.png" alt="" style="position:absolute;left:2%;top:4%;width:26vmax;transform:rotate(-32deg)">
+        <img src="./assets/feather_6.png" alt="" style="position:absolute;right:4%;top:0%;width:24vmax;transform:rotate(28deg)">
+        <img src="./assets/feather_4.png" alt="" style="position:absolute;left:-4%;bottom:2%;width:26vmax;transform:rotate(18deg)">
+        <img src="./assets/feather_7.png" alt="" style="position:absolute;right:0%;bottom:4%;width:28vmax;transform:rotate(-42deg)">
+        <img src="./assets/feather_1.png" alt="" style="position:absolute;left:40%;top:-8%;width:16vmax;transform:rotate(58deg);opacity:0.7">
+        <img src="./assets/feather_9.png" alt="" style="position:absolute;left:30%;bottom:-6%;width:16vmax;transform:rotate(-12deg);opacity:0.65">
+        <img src="./assets/feather_3.png" alt="" style="position:absolute;left:16%;top:40%;width:12vmax;transform:rotate(70deg);opacity:0.6">
+        <img src="./assets/feather_8.png" alt="" style="position:absolute;right:14%;top:44%;width:13vmax;transform:rotate(-64deg);opacity:0.6">
+      </div>
+      <div style="position:absolute;inset:0;background:rgba(245,238,224,0.26)"></div>
+      <div style="position:absolute;inset:0;background:radial-gradient(ellipse 75% 70% at 50% 50%, rgba(80,60,35,0) 55%, rgba(80,60,35,0.2) 100%)"></div>
+    </div>
+  </sc-if>
+  <sc-if value="{{showBackLink}}" hint-placeholder-val="{{true}}">
+    <a href="dashboard.html" aria-label="Back to projects" title="Back" style="position:fixed;top:16px;left:16px;min-width:44px;min-height:44px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;padding:4px 16px 8px;font-size:34px;line-height:1;font-weight:400;color:#4a3b2c;background:rgba(255,255,255,0.3);border:none;border-radius:8px;text-decoration:none;cursor:pointer;transition:all 200ms ease;z-index:900" style-hover="background:rgba(255,255,255,0.5);transform:scale(1.05)">&lsaquo;</a>
+  </sc-if>
+  <div ref="{{containerRef}}" style="position:relative;width:400px;height:560px;background:transparent;border-radius:20px;box-shadow:none">
+    <div style="position:absolute;top:18px;left:50%;transform:translateX(-50%) rotate(-5deg);width:132px;height:84px;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse 90% 70% at 28% 22%, rgba(255,253,245,0.35) 0%, rgba(255,253,245,0) 70%), url('./assets/note_paper.png') center / cover, #ece3cf;border-radius:1px;box-shadow:inset -1px -1px 0 rgba(150,130,95,0.35), inset 1px 1px 0 rgba(255,255,255,0.5), 1px 1px 0 rgba(170,150,115,0.55), 2px 2px 0 rgba(150,130,95,0.35), 3px 10px 14px -4px rgba(70,55,35,0.32);z-index:200"><span style="font-family:'Nanum Pen Script',cursive;font-size:34px;line-height:1;color:#2b2622;letter-spacing:0.5px;transform:rotate(1deg)">{{timeLabel}}</span></div>
+    <div style="position:absolute;bottom:60px;left:50%;transform:translateX(-50%);width:200px;height:300px;z-index:2">
+      <img src="./assets/bottle.png" alt="jar" style="position:relative;display:block;width:100%;height:100%;object-fit:contain;object-position:bottom;pointer-events:none;z-index:1">
+      <div ref="{{flowerLayerRef}}" style="position:absolute;bottom:12px;left:20px;width:160px;height:230px;z-index:3;overflow:visible;clip-path:path('M 62,0 L 60,10 L 51,20 L 34,30 L 22,40 L 15,50 L 10,60 L 8,70 L 6,80 L 6,200 L 7,210 L 12,220 L 22,230 L 138,230 L 148,220 L 153,210 L 154,200 L 154,80 L 152,70 L 150,60 L 145,50 L 138,40 L 126,30 L 109,20 L 100,10 L 98,0 Z')"></div>
+      <div style="position:absolute;bottom:12px;left:20px;width:160px;height:230px;z-index:4;pointer-events:none;clip-path:path('M 62,0 L 62,18 C 62,40 10,48 10,78 L 10,206 C 10,218 18,224 32,224 L 128,224 C 142,224 150,218 150,206 L 150,78 C 150,48 98,40 98,18 L 98,0 Z');background:radial-gradient(ellipse 42% 5% at 50% 94%, rgba(255,255,255,0.3), rgba(255,255,255,0) 100%), linear-gradient(90deg, rgba(255,255,255,0) 19%, rgba(255,255,255,0.42) 22.5%, rgba(255,255,255,0.16) 26%, rgba(255,255,255,0) 30%), linear-gradient(90deg, rgba(255,255,255,0) 81%, rgba(255,255,255,0.32) 84%, rgba(255,255,255,0) 86.5%), linear-gradient(90deg, rgba(110,165,135,0.38) 6%, rgba(150,195,170,0.1) 17%, rgba(170,210,185,0.05) 50%, rgba(150,195,170,0.1) 83%, rgba(110,165,135,0.38) 94%)"></div>
+    </div>
+    <button onClick="{{openTimeModal}}" style="position:absolute;bottom:4px;left:50%;transform:translateX(-50%);padding:12px 26px;font-family:'Nanum Pen Script',cursive;font-size:26px;line-height:1;color:#2b2622;letter-spacing:0.5px;background:radial-gradient(ellipse 90% 70% at 28% 22%, rgba(255,253,245,0.35) 0%, rgba(255,253,245,0) 70%), url('./assets/note_paper.png') center / cover, #ece3cf;border:1px solid rgba(150,130,95,0.35);border-radius:2px;cursor:pointer;box-shadow:inset 1px 1px 0 rgba(255,255,255,0.5), 1px 1px 0 rgba(170,150,115,0.45), 2px 6px 10px -4px rgba(70,55,35,0.28);transition:transform .2s, box-shadow .2s;z-index:100" style-hover="transform:translateX(-50%) translateY(-1px);box-shadow:inset 1px 1px 0 rgba(255,255,255,0.5), 1px 1px 0 rgba(170,150,115,0.45), 3px 9px 14px -4px rgba(70,55,35,0.34)">Add Time</button>
+  </div>
+
+  <sc-if value="{{showTimeModal}}" hint-placeholder-val="{{false}}">
+    <div style="position:fixed;top:0;left:0;width:100%;height:100%;background:transparent;z-index:1000;display:flex;justify-content:center;align-items:center">
+      <div style="background:linear-gradient(150deg, rgba(235,250,235,0.05) 0%, rgba(195,225,205,0.03) 30%, rgba(150,195,165,0.04) 65%, rgba(110,160,130,0.06) 100%);backdrop-filter:blur(24px) saturate(1.8);border:1px solid rgba(255,255,255,0.85);border-top-color:rgba(255,255,255,1);border-radius:20px;padding:36px 40px;text-align:center;box-shadow:0 28px 70px rgba(50,100,75,0.45);max-width:340px;opacity:0;animation:timeModalIn 2.8s cubic-bezier(.16,1,.3,1) forwards">
+        <p style="font-size:14px;color:#4d6b52;margin:0 0 24px">Let another feather fall. How long did you spend?</p>
+        <div style="display:flex;gap:16px;justify-content:center;margin-bottom:26px">
+          <div style="display:flex;flex-direction:column;align-items:flex-start;gap:6px">
+            <label style="font-size:12px;color:#4d6b52;font-weight:600">Hours</label>
+            <input ref="{{hoursInputRef}}" type="number" min="0" placeholder="0" style="width:90px;padding:10px 12px;font-size:16px;border:1px solid #ddd;border-radius:10px;outline:none;color:#2c4a33">
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-start;gap:6px">
+            <label style="font-size:12px;color:#4d6b52;font-weight:600">Minutes</label>
+            <input ref="{{minInputRef}}" type="number" min="0" placeholder="0" style="width:90px;padding:10px 12px;font-size:16px;border:1px solid #ddd;border-radius:10px;outline:none;color:#2c4a33">
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;justify-content:center">
+          <button onClick="{{closeTimeModal}}" style="flex:1;padding:12px 20px;font-size:15px;font-weight:600;border:none;border-radius:25px;cursor:pointer;background:#f0f0f0;color:#555">Cancel</button>
+          <button onClick="{{submitTime}}" style="flex:1;padding:12px 20px;font-size:15px;font-weight:600;color:#fff;border:none;border-radius:25px;cursor:pointer;background:linear-gradient(150deg, rgba(143,191,138,0.55) 0%, rgba(95,149,95,0.6) 100%);box-shadow:0 4px 15px rgba(90,138,90,0.25)">Add</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{showModal}}" hint-placeholder-val="{{false}}">
+    <div style="position:fixed;top:0;left:0;width:100%;height:100%;background:transparent;z-index:1000;display:flex;justify-content:center;align-items:center">
+      <div style="background:linear-gradient(150deg, rgba(240,232,218,0.62) 0%, rgba(196,186,172,0.34) 100%);-webkit-backdrop-filter:blur(14px) saturate(1.3);backdrop-filter:blur(14px) saturate(1.3);border:1px solid rgba(255,255,255,0.7);border-top-color:rgba(255,255,255,0.9);border-radius:20px;padding:40px;text-align:center;box-shadow:0 24px 60px rgba(88,84,77,0.3), inset 0 4px 6px rgba(255,255,255,0.6), inset 0 -6px 10px rgba(98,93,86,0.15);max-width:380px;width:calc(100% - 48px);box-sizing:border-box">
+        <h2 style="font-family:'Nanum Pen Script', cursive;font-weight:400;font-size:44px;line-height:1;margin:0 0 12px;color:rgb(63,60,55)">{{milestoneTitle}}</h2>
+        <p style="font-size:15px;color:rgba(88,84,77,1);margin:0 0 28px">{{milestoneMessage}}</p>
+        <div style="display:flex;gap:12px;justify-content:center">
+          <button onClick="{{startNewRound}}" style="flex:1;padding:12px 20px;font-size:15px;font-weight:600;border:1px solid rgba(255,255,255,0.75);border-radius:25px;cursor:pointer;background:rgba(255,255,255,0.45);color:rgb(63,60,55)">Start New Round</button>
+          <button onClick="{{continueRound}}" style="flex:1;padding:12px 20px;font-size:15px;font-weight:600;color:#fff;border:none;border-radius:25px;cursor:pointer;background:rgba(118,112,103,0.88);box-shadow:0 4px 14px rgba(98,93,86,0.3)">Keep Going</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+
+
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:480,&quot;height&quot;:680},&quot;milestoneTarget&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:400,&quot;tsType&quot;:&quot;number&quot;,&quot;min&quot;:50,&quot;max&quot;:2000,&quot;step&quot;:50},&quot;fallSpeed&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:1,&quot;tsType&quot;:&quot;number&quot;,&quot;min&quot;:0.4,&quot;max&quot;:2,&quot;step&quot;:0.1}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.pageRef = React.createRef();
+    this.containerRef = React.createRef();
+    this.flowerLayerRef = React.createRef();
+    this.minInputRef = React.createRef();
+    this.hoursInputRef = React.createRef();
+    this.state = { showModal: false, showTimeModal: false, totalMinutesInvested: 0 };
+    this.currentRoundFlowers = 0;
+    this.GRID_COLS = 5;
+    this.CELL_W = 32;
+    this.PILE_HEIGHT = 230;
+    // CELL_H is fixed at roughly the flower's own footprint so rows stay visually distinct;
+    // deriving it from milestoneTarget/GRID_COLS instead (as before) made rows a fraction of
+    // a pixel tall once milestoneTarget got large, so hundreds of flowers landed stacked
+    // almost exactly on top of each other and only the topmost was ever visible
+    // scale row height down for larger milestones so the pile keeps growing toward the top
+    // as more flowers are added instead of maxing out (and wrapping) far short of the target;
+    // floored at 6px so rows never shrink to sub-pixel and flowers vanish behind each other
+    const rowsNeeded = Math.ceil((props.milestoneTarget ?? 400) / this.GRID_COLS);
+    this.CELL_H = Math.max(6, Math.min(15, this.PILE_HEIGHT / rowsNeeded));
+    this.TOTAL_ROWS = Math.floor(this.PILE_HEIGHT / this.CELL_H);
+    this.rowQueues = {};
+    this.storageKey = 'timejar_state_feather-jar';
+    { const qid = new URLSearchParams(window.location.search).get('id'); if (qid && /^[\w-]+$/.test(qid)) this.storageKey = 'timejar_state_' + qid; }
+    this.flowerImages = [
+      './assets/feather_1.png', './assets/feather_2.png', './assets/feather_3.png', './assets/feather_4.png',
+      './assets/feather_5.png', './assets/feather_6.png', './assets/feather_7.png',
+      './assets/feather_8.png', './assets/feather_9.png',
+    ];
+    this.flowerImages.forEach(src => { const img = new Image(); img.src = src; });
+  }
+
+  componentDidMount() {
+    this.restoreState();
+    if (window.location.search.indexOf('thumb=1') !== -1 && this.pageRef.current) {
+      this.pageRef.current.style.background = 'transparent';
+    }
+  }
+
+  saveState = () => {
+    const layer = this.flowerLayerRef.current;
+    if (!layer) return;
+    const flowers = Array.from(layer.children).map(n => ({
+      src: n.dataset.src, x: +n.dataset.x, y: +n.dataset.y, rot: n.dataset.rot, scale: +n.dataset.scale || 1,
+    }));
+    const milestoneTarget = this.props.milestoneTarget ?? 400;
+    const fillPercent = Math.min(100, Math.round((this.currentRoundFlowers / milestoneTarget) * 100));
+    const data = {
+      v: 2, flowers, currentRoundFlowers: this.currentRoundFlowers,
+      compressedCount: this.compressedCount || 0, pileBase: this.pileBase || 0,
+      roundMinutes: this.roundMinutes || 0,
+      carryMinutes: this.carryMinutes || 0,
+      totalMinutesInvested: this.state.totalMinutesInvested, fillPercent,
+    };
+    try { localStorage.setItem(this.storageKey, JSON.stringify(data)); } catch (e) {}
+  };
+
+  restoreState = () => {
+    let raw;
+    try { raw = localStorage.getItem(this.storageKey); } catch (e) { raw = null; }
+    if (!raw || raw.length > 200000) return;
+    let data;
+    try { data = JSON.parse(raw); } catch (e) { data = null; }
+    // v2 = sequential bottom-up row fill; any older/missing version used a different layout
+    // algorithm, so its saved cell positions no longer match and must be discarded
+    if (!data || data.v !== 2 || !Array.isArray(data.flowers) || !data.flowers.length) { try { localStorage.removeItem(this.storageKey); } catch (e) {} return; }
+    const layer = this.flowerLayerRef.current;
+    if (!layer) return;
+    const totalRows = Math.ceil((this.props.milestoneTarget ?? 400) / this.GRID_COLS);
+    const maxCell = this.GRID_COLS * totalRows;
+    const usedColsByRow = {};
+    let migrated = false;
+    this.compressedCount = Number.isFinite(data.compressedCount) ? data.compressedCount : 0;
+    this.pileBase = Number.isFinite(data.pileBase) ? data.pileBase : 0;
+    const savedCount = (Number.isFinite(data.currentRoundFlowers) ? data.currentRoundFlowers : data.flowers.length) + this.compressedCount;
+    if (data.flowers.length > savedCount) migrated = true;
+    data.flowers.slice(0, Math.min(1600, savedCount)).forEach((f, i) => {
+      if (!f || typeof f.src !== 'string') return;
+      if (f.src.indexOf('feather_') === -1) f.src = './assets/feather_1.png';
+      const m = f.src.match(/flower(?:_(\d))?\.png$/);
+      if (m) f.src = './assets/fl_' + (m[1] || '1') + '.png';
+      const cell = parseInt(f.cell, 10) || 0;
+      let spot, rot = f.rot, scale = f.scale;
+      if (!migrated && Number.isFinite(f.x) && Number.isFinite(f.y) && f.x > 0) {
+        const cy = Math.max(16, Math.min(212, f.y));
+        const innerHalf = (yy) => { const t = [[0,58],[10,68],[20,73],[30,74],[150,74],[160,72],[170,70],[180,65],[190,58],[200,46],[210,29],[220,20]]; if (yy <= t[0][0]) return t[0][1]; for (let i = 1; i < t.length; i++) if (yy <= t[i][0]) { const a = t[i - 1], b = t[i]; return a[1] + (b[1] - a[1]) * (yy - a[0]) / (b[0] - a[0]); } return 20; };
+        let half = Math.max(4, innerHalf(cy) - 16);
+        spot = { x: Math.max(80 - half, Math.min(80 + half, f.x)), y: cy };
+      }
+      else {
+        spot = this.randomSpot(i);
+        rot = Math.round(Math.random() * 360);
+        scale = +(0.88 + Math.random() * 0.2).toFixed(2);
+        migrated = true;
+      }
+      const node = this.makeFlowerNode(f.src, spot, rot, scale);
+      layer.appendChild(node);
+      const row = Math.floor(cell / this.GRID_COLS);
+      const col = cell % this.GRID_COLS;
+      (usedColsByRow[row] = usedColsByRow[row] || []).push(col);
+    });
+    this.currentRoundFlowers = Number.isFinite(data.currentRoundFlowers) ? data.currentRoundFlowers : 0;
+    const tmi = Number.isFinite(data.totalMinutesInvested) ? data.totalMinutesInvested : 0;
+    // the milestone follows invested time: minutes this round decide how full the jar is.
+    // Top up any items that never got to fall (page left mid-drop) so jar and time match.
+    const target = this.props.milestoneTarget ?? 400;
+    this.roundMinutes = Number.isFinite(data.roundMinutes) ? data.roundMinutes : ((this.compressedCount || 0) ? this.currentRoundFlowers * 30 : tmi);
+    this.carryMinutes = Number.isFinite(data.carryMinutes) ? data.carryMinutes : 0;
+    const expected = Math.min(target, Math.ceil(this.roundMinutes / 30));
+    const layerEl = this.flowerLayerRef.current;
+    while (layerEl && this.currentRoundFlowers < expected) {
+      const spot = this.randomSpot(this.currentRoundFlowers);
+      const src = this.flowerImages[Math.floor(Math.random() * this.flowerImages.length)];
+      const node = this.makeFlowerNode(src, spot, Math.round(Math.random() * 360), +(0.88 + Math.random() * 0.2).toFixed(2));
+      node.dataset.landed = '1';
+      layerEl.appendChild(node);
+      this.currentRoundFlowers++;
+    }
+    const full = this.roundMinutes >= target * 30 && window.location.search.indexOf('thumb=1') === -1;
+    this.setState({ totalMinutesInvested: tmi, showModal: full }, () => this.saveState());
+    // rebuild the queue for the row that's mid-fill so the next new flower picks a column
+    // that isn't already occupied by a restored one
+    const resumeRow = Math.floor(this.currentRoundFlowers / this.GRID_COLS);
+    const used = usedColsByRow[resumeRow] || [];
+    const remaining = Array.from({ length: this.GRID_COLS }, (_, i) => i).filter(c => !used.includes(c));
+    for (let i = remaining.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [remaining[i], remaining[j]] = [remaining[j], remaining[i]];
+    }
+    this.rowQueues = { [resumeRow]: remaining };
+    if (migrated) { this.rowQueues = {}; this.saveState(); }
+  };
+
+  formatTimeLabel(totalMinutes) {
+    const h = Math.floor(totalMinutes / 60);
+    const m = totalMinutes % 60;
+    return h <= 0 ? `${m}m` : `${h}h ${m}m`;
+  }
+
+  // fills strictly bottom-up, row by row (chronological flower N always lands in row
+  // floor(N/GRID_COLS)) so the pile visibly builds up from the floor and always fully packs a
+  // row before starting the next — columns within a row are shuffled so it still looks natural.
+  // once every row is full it wraps back to the bottom row so later flowers still land inside
+  // the pile area (layered on top of earlier ones) instead of running out of rows.
+  nextCell(chronologicalIndex) {
+    const row = Math.floor(chronologicalIndex / this.GRID_COLS) % this.TOTAL_ROWS;
+    if (!this.rowQueues[row] || !this.rowQueues[row].length) {
+      const cols = Array.from({ length: this.GRID_COLS }, (_, i) => i);
+      for (let i = cols.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [cols[i], cols[j]] = [cols[j], cols[i]];
+      }
+      this.rowQueues[row] = cols;
+    }
+    const col = this.rowQueues[row].pop();
+    return row * this.GRID_COLS + col;
+  }
+
+  // random but even placement: height grows with progress (full at milestone), x is
+  // stratified across 5 lanes with jitter, clamped to the jar's inner width (narrower at the
+  // rounded bottom) so no flower is ever clipped by the glass edge
+  randomSpot(index) {
+    const target = this.props.milestoneTarget ?? 400;
+    const R = 12, W = 160;
+    const lane = this.nextCell(index) % this.GRID_COLS;
+    // pile rises from the glass floor (layer y≈8) up to the shoulders (layer y≈205)
+    // after a compression the new round piles on top of the squashed layer (pileBase)
+    const base = Math.max(16, this.pileBase || 0);
+    let y = base + (index / target) * (212 - base) + (Math.random() - 0.5) * 10;
+    y = Math.max(16, Math.min(212, y));
+    // body walls sit at layer x≈9..150 → centres 55px either side of middle; narrower at the
+    // rounded floor corners and at the shoulders where the bottle curves into the neck
+    const innerHalf = (yy) => { const t = [[0,58],[10,68],[20,73],[30,74],[150,74],[160,72],[170,70],[180,65],[190,58],[200,46],[210,29],[220,20]]; if (yy <= t[0][0]) return t[0][1]; for (let i = 1; i < t.length; i++) if (yy <= t[i][0]) { const a = t[i - 1], b = t[i]; return a[1] + (b[1] - a[1]) * (yy - a[0]) / (b[0] - a[0]); } return 20; };
+    let half = Math.max(4, innerHalf(y) - 16);
+    const minX = W / 2 - half, maxX = W / 2 + half;
+    const x = minX + ((lane + 0.15 + Math.random() * 0.7) / this.GRID_COLS) * (maxX - minX);
+    return { x: Math.round(x), y: Math.round(y) };
+  }
+
+  cellToSpot(cell) {
+    const col = cell % this.GRID_COLS, row = Math.floor(cell / this.GRID_COLS) % this.TOTAL_ROWS;
+    return { x: 20 + col * 30, y: 17 + row * this.CELL_H };
+  }
+
+  // lying flat: small side-to-side tilt, then squash vertically so the flower head reads as
+  // seen from the side resting on the pile; rot spins the flower within its own plane first
+  flatTransform(rot, scale) {
+    const r = Number(rot) || 0;
+    const tilt = ((r * 7) % 24) - 12;
+    const squash = 0.75 + ((r * 13) % 16) / 100;
+    return `translate(-50%, 50%) rotate(${tilt}deg) scale(${scale}, ${(scale * squash).toFixed(3)}) rotate(${r}deg)`;
+  }
+
+  makeFlowerNode(src, spot, rot, scale) {
+    const x = spot.x, y = spot.y;
+    scale = scale || 1;
+    const el = document.createElement('div');
+    el.dataset.src = src;
+    el.dataset.x = x;
+    el.dataset.y = y;
+    el.dataset.rot = rot;
+    el.dataset.scale = scale;
+    el.style.position = 'absolute';
+    el.style.width = '58px';
+    el.style.height = '58px';
+    el.style.left = x + 'px';
+    el.style.bottom = y + 'px';
+    el.style.transform = this.flatTransform(rot, scale);
+    el.style.backgroundImage = `url('${src}')`;
+    el.style.backgroundSize = 'contain';
+    el.style.backgroundRepeat = 'no-repeat';
+    el.style.backgroundPosition = 'center';
+    // drop-shadow follows the flower's alpha silhouette; box-shadow drew a visible
+    // rectangle behind the transparent PNG's square canvas
+    el.style.filter = 'drop-shadow(1px 2px 2px rgba(0,0,0,0.18))';
+    return el;
+  }
+
+  openTimeModal = () => { if (!this.state.showModal) this.setState({ showTimeModal: true }); };
+  closeTimeModal = () => { this.setState({ showTimeModal: false }); };
+
+  submitTime = () => {
+    const mins = parseInt(this.minInputRef.current.value, 10) || 0;
+    const hrs = parseInt(this.hoursInputRef.current.value, 10) || 0;
+    this.setState({ showTimeModal: false });
+    this.addMinutes(hrs * 60 + mins);
+  };
+
+  // a round holds exactly one milestone (e.g. 200h). Time beyond it waits in carryMinutes and is
+  // poured into the next round after "Keep going" / "Start new round"
+  addMinutes = (entered) => {
+    if (!(entered > 0)) return;
+    const cap = (this.props.milestoneTarget ?? 400) * 30;
+    const room = Math.max(0, cap - (this.roundMinutes || 0));
+    const totalMinutes = Math.min(entered, room);
+    this.carryMinutes = (this.carryMinutes || 0) + (entered - totalMinutes);
+    if (totalMinutes <= 0) { this.saveState(); this.setState({ showModal: true }); return; }
+    // save only after the new total is in state, otherwise the added minutes are lost on reload
+    this.setState(s => ({ showTimeModal: false, totalMinutesInvested: (s.totalMinutesInvested || 0) + totalMinutes }), () => this.saveState());
+    if (totalMinutes <= 0) return;
+    const target = this.props.milestoneTarget ?? 400;
+    const before = this.roundMinutes || 0;
+    this.roundMinutes = before + totalMinutes;
+    // every entry earns at least one item (1–30 min = 1, 31–60 = 2, …). The last slot is held back
+    // until the round's time reaches the milestone, so the jar fills (and the pop-up opens) on time
+    const reached = this.roundMinutes >= target * 30;
+    const flowerCount = Math.max(Math.max(1, Math.ceil(totalMinutes / 30)), reached ? target - this.currentRoundFlowers : 0);
+    // jar already full (earlier entries filled it): show the milestone so the user can keep going
+    if (flowerCount === 0 && reached) { this.setState({ showModal: true }); return; }
+    if (flowerCount === 0) return;
+    const shown = Math.min(flowerCount, 60);
+    // up to 60 fall in the waterfall; any extra are placed straight into the pile so a big
+    // entry never takes minutes to finish (and can't be lost by leaving the page)
+    for (let i = 0; i < flowerCount - shown; i++) this.placeInstant();
+    for (let i = 0; i < shown; i++) setTimeout(() => this.addFlower(), i * 350);
+    this.saveState();
+    if (this.roundMinutes >= target * 30) {
+      const wait = shown ? (shown - 1) * 350 + 6300 / (this.props.fallSpeed ?? 1) + 600 : 300;
+      clearTimeout(this.popupTimer);
+      this.popupTimer = setTimeout(() => this.setState({ showModal: true }), wait);
+    }
+  };
+
+  placeInstant() {
+    const layerEl = this.flowerLayerRef.current;
+    if (!layerEl) return;
+    const spot = this.randomSpot(this.currentRoundFlowers);
+    const src = this.flowerImages[Math.floor(Math.random() * this.flowerImages.length)];
+    const node = this.makeFlowerNode(src, spot, Math.round(Math.random() * 360), +(0.88 + Math.random() * 0.2).toFixed(2));
+    node.dataset.landed = '1';
+    layerEl.appendChild(node);
+    this.currentRoundFlowers++;
+  }
+
+  addFlower = () => {
+    const milestoneTarget = this.props.milestoneTarget ?? 400;
+    if (this.state.showModal) return;
+    if (this.currentRoundFlowers >= milestoneTarget + 60) return;
+    const spot = this.randomSpot(this.currentRoundFlowers);
+    const src = this.flowerImages[Math.floor(Math.random() * this.flowerImages.length)];
+    const rot = Math.round(Math.random() * 360);
+    const scale = +(0.88 + Math.random() * 0.2).toFixed(2);
+    const node = this.makeFlowerNode(src, spot, rot, scale);
+    const targetY = spot.y;
+    const localX = spot.x;
+    // fall in the jar's OUTER (unclipped) wrapper first, straight down through the neck —
+    // the pile layer's overflow:hidden would crop the flower to a sliver mid-fall. Once
+    // landed, reparent into the pile layer at its real local coordinates.
+    const layerOffsetBottom = 12, layerOffsetLeft = 20;
+    const finalBottom = targetY + layerOffsetBottom;
+    const finalLeft = localX + layerOffsetLeft;
+    const neckX = 100; // outer wrapper is 200px wide — jar neck center
+    const outerWrap = this.flowerLayerRef.current.parentElement;
+    const dropStart = 470; // just above the time pill at the top of the card
+    const neckExit = Math.max(finalBottom + 10, 205);
+    const neckOffset = Math.min(0.97, Math.max(0.04, 0.03 + 0.97 * (dropStart - neckExit) / Math.max(1, dropStart - finalBottom)));
+    node.style.left = neckX + 'px';
+    node.style.bottom = dropStart + 'px';
+    node.style.opacity = '0';
+    node.style.zIndex = '2'; // between the glass artwork (z1) and the pile layer (z3) so it stays visible in front of the glass the whole way down
+    outerWrap.appendChild(node);
+    // slow, mostly-straight fall down through the neck; the bottom track never goes past
+    // finalBottom (the actual resting spot inside the jar), so it can't overshoot past it
+    // constant-speed fall: after the brief fade-in, bottom and left both interpolate linearly
+    // in a single segment all the way to the landing spot, so speed never changes mid-fall
+    // every keyframe uses the SAME transform function list as flatTransform, so rotation, tilt
+    // and flattening interpolate smoothly instead of snapping at the end. Below the neck the
+    // sideways drift eases in and out (smoothstep) so the flower curves gently toward its spot
+    // and settles, with no sudden change of direction or hop on landing.
+    const fr = Number(rot) || 0;
+    const fTilt = ((fr * 7) % 24) - 12;
+    const fSquash = 0.75 + ((fr * 13) % 16) / 100;
+    const tf = (tilt, sx, sy, r) => `translate(-50%, 50%) rotate(${tilt}deg) scale(${sx.toFixed(3)}, ${sy.toFixed(3)}) rotate(${r}deg)`;
+    const frames = [
+      { left: neckX + 'px', bottom: dropStart + 'px', opacity: 0, offset: 0, transform: tf(0, 0.72, 0.72, 14) },
+      { left: neckX + 'px', bottom: dropStart + 'px', opacity: 1, offset: 0.03, transform: tf(0, 0.72, 0.72, 14) },
+      { left: neckX + 'px', bottom: neckExit + 'px', opacity: 1, offset: neckOffset, transform: tf(0, 0.72, 0.72, -16) },
+    ];
+    const steps = 6;
+    for (let k = 1; k <= steps; k++) {
+      const t = k / steps;
+      const e = t * t * (3 - 2 * t);
+      const sx = 0.72 + (scale - 0.72) * e;
+      const sy = 0.72 + (scale * fSquash - 0.72) * e;
+      frames.push({
+        left: (neckX + (finalLeft - neckX) * e).toFixed(2) + 'px',
+        bottom: (neckExit + (finalBottom - neckExit) * t).toFixed(2) + 'px',
+        opacity: 1,
+        offset: k === steps ? 1 : neckOffset + (1 - neckOffset) * t,
+        transform: tf(fTilt * e, sx, sy, -16 + (fr + 16) * e),
+      });
+    }
+    const anim = node.animate(frames, { duration: 6200 / (this.props.fallSpeed ?? 1), easing: 'linear', fill: 'forwards' });
+    const land = () => {
+      if (node.dataset.landed) return;
+      node.dataset.landed = '1';
+      node.style.left = localX + 'px';
+      node.style.bottom = targetY + 'px';
+      node.style.opacity = '1';
+      node.style.zIndex = '';
+      node.style.transform = this.flatTransform(rot, scale);
+      anim.cancel();
+      if (node.parentElement) node.remove();
+      if (this.flowerLayerRef.current) this.flowerLayerRef.current.appendChild(node);
+      this.saveState();
+    };
+    // onfinish alone is unreliable if the animation gets cancelled/replaced by a re-render —
+    // use the finished promise (fires even if the element/animation is later interrupted) plus
+    // a hard timeout fallback so the flower always ends up landed inside the pile
+    if (anim.finished && anim.finished.then) anim.finished.then(land).catch(land);
+    else anim.onfinish = land;
+    setTimeout(land, 6300 / (this.props.fallSpeed ?? 1));
+    this.currentRoundFlowers++;
+  };
+
+  startNewRound = () => {
+    { const carry = this.carryMinutes || 0; if (carry > 0) setTimeout(() => { if ((this.carryMinutes || 0) !== carry) return; this.carryMinutes = 0; this.addMinutes(carry); }, 900); }
+    const layer = this.flowerLayerRef.current;
+    Array.from(layer.children).forEach(n => n.remove());
+    this.compressedCount = 0;
+    this.pileBase = 0;
+    this.currentRoundFlowers = 0;
+    this.roundMinutes = 0;
+    this.rowQueues = {};
+    this.setState({ showModal: false, totalMinutesInvested: 0 });
+    this.saveState();
+  };
+
+  // "Keep going": the pop-up closes first, then the whole pile settles smoothly down into a
+  // compact layer on the floor (nothing disappears) and the next round piles on top of it
+  continueRound = () => {
+    { const carry = this.carryMinutes || 0; if (carry > 0) setTimeout(() => { if ((this.carryMinutes || 0) !== carry) return; this.carryMinutes = 0; this.addMinutes(carry); }, 3600); }
+    this.currentRoundFlowers = 0;
+    this.roundMinutes = Math.max(0, (this.roundMinutes || 0) - (this.props.milestoneTarget ?? 400) * 30);
+    this.rowQueues = {};
+    this.setState({ showModal: false });
+    const layer = this.flowerLayerRef.current;
+    if (!layer) return;
+    const nodes = Array.from(layer.children);
+    this.compressedCount = nodes.length;
+    const floor = 14, top = 205, ratio = 0.22;
+    this.pileBase = floor + ((this.pileBase || floor) - floor) * ratio + (top - floor) * ratio * (1 - ((this.pileBase || floor) - floor) / (top - floor));
+    this.pileBase = Math.min(90, Math.max(floor + 20, this.pileBase));
+    const baseTop = this.pileBase;
+    setTimeout(() => {
+      nodes.forEach(n => {
+        const oy = +n.dataset.y || floor, ox = +n.dataset.x || 80;
+        const ny = floor + (oy - floor) * ((baseTop - floor) / (top - floor));
+        let half = ny < 30 ? 44 + (ny - 6) * 0.45 : 55;
+        const nx = Math.max(80 - half, Math.min(80 + half, ox));
+        n.animate([{ left: ox + 'px', bottom: oy + 'px' }, { left: nx + 'px', bottom: ny + 'px' }],
+          { duration: 2400, easing: 'cubic-bezier(.45,0,.25,1)' });
+        n.style.left = nx + 'px';
+        n.style.bottom = ny + 'px';
+        n.dataset.x = Math.round(nx);
+        n.dataset.y = Math.round(ny);
+      });
+      this.saveState();
+    }, 700);
+  };
+
+  renderVals() {
+    const milestoneTarget = this.props.milestoneTarget ?? 400;
+    return {
+      timeLabel: this.formatTimeLabel(this.state.totalMinutesInvested || 0),
+      showModal: this.state.showModal,
+      showTimeModal: this.state.showTimeModal,
+      milestoneHoursLabel: `${Math.round(Math.max(1, Math.floor((this.state.totalMinutesInvested || 0) / (milestoneTarget * 30))) * milestoneTarget * 30 / 60)} hours`,
+      milestoneTitle: `${Math.round(Math.max(1, Math.floor((this.state.totalMinutesInvested || 0) / (milestoneTarget * 30))) * milestoneTarget * 30 / 60)} hours`,
+      milestoneMessage: (() => { const h = Math.round(Math.max(1, Math.floor((this.state.totalMinutesInvested || 0) / (milestoneTarget * 30))) * milestoneTarget * 30 / 60); const fixed = { 200: "You've started something real!", 400: 'Your time is taking shape.', 600: 'Look how much time you\u2019ve made visible.', 800: 'There\u2019s a lot of life in here now.', 1000: 'More of your life has found its place here.' }; const rot = ['Your collection keeps growing.', 'Another layer has been added.', 'Your jar keeps telling its story.', 'Still gathering, piece by piece.']; return fixed[h] || rot[Math.max(0, Math.round((h - 1200) / 200)) % 4]; })(),
+      openTimeModal: this.openTimeModal,
+      closeTimeModal: this.closeTimeModal,
+      submitTime: this.submitTime,
+      startNewRound: this.startNewRound,
+      continueRound: this.continueRound,
+      containerRef: this.containerRef,
+      pageRef: this.pageRef,
+      showBackLink: window.location.search.indexOf('thumb=1') === -1,
+      showBackdrop: window.location.search.indexOf('thumb=1') === -1,
+      flowerLayerRef: this.flowerLayerRef,
+      minInputRef: this.minInputRef,
+      hoursInputRef: this.hoursInputRef,
+    };
+  }
+}
+
+</script>
+</body>
+</html>
