@@ -10,16 +10,13 @@
 </head>
 <body class="welcome-body">
   <div class="welcome">
-    <!-- soft botanical watercolour wash, same recipe as the jar pages -->
     <div class="welcome__wash" aria-hidden="true">
       <div class="welcome__paper"></div>
       <div class="welcome__haze"></div>
       <div class="welcome__vignette"></div>
     </div>
 
-
     <img class="welcome__watch" id="watch" src="assets/pocket_watch.png" alt="Vintage pocket watch">
-    <!-- tiny clock numerals drift from the watch and bloom into flowers that fall into the jar -->
     <div class="welcome__drift" id="drift" aria-hidden="true"></div>
 
     <header class="welcome__copy">
@@ -33,22 +30,21 @@
     </div>
   </div>
 
-  <!-- Auth Modal -->
-  <div id="auth-modal" class="auth-modal-overlay" style="display: none;">
+  <div id="auth-modal" class="auth-modal-overlay">
     <div class="auth-modal">
       <div class="auth-modal-tabs">
         <button class="auth-tab active" onclick="switchTab('signup')">Sign Up</button>
         <button class="auth-tab" onclick="switchTab('signin')">Sign In</button>
       </div>
 
-      <div id="signup-form" class="auth-form">
+      <div id="signup-form" class="auth-form active">
         <input type="email" id="signup-email" placeholder="Email" class="auth-input">
         <input type="password" id="signup-password" placeholder="Password" class="auth-input">
         <button onclick="handleSignup()" class="auth-button">Create Account</button>
         <div id="signup-error" style="color: #d32f2f; font-size: 14px; margin-top: 12px;"></div>
       </div>
 
-      <div id="signin-form" class="auth-form" style="display: none;">
+      <div id="signin-form" class="auth-form">
         <input type="email" id="signin-email" placeholder="Email" class="auth-input">
         <input type="password" id="signin-password" placeholder="Password" class="auth-input">
         <button onclick="handleSignin()" class="auth-button">Sign In</button>
@@ -103,8 +99,6 @@
     .drift-p__fl img { width: 100%; height: 100%; object-fit: contain; }
     .welcome__watch {
       position: absolute;
-      /* sits just above and left of the jar's mouth, so the falling flowers tell a short,
-         readable story from clock to jar */
       top: 30vh;
       left: calc(50% - min(26vw, 250px));
       width: min(18vw, 190px);
@@ -140,7 +134,6 @@
       display: inline-block;
       isolation: isolate;
     }
-    /* flowers fill the lower half of the O, like a half-full jar */
     .welcome__jar-o::after {
       content: '';
       position: absolute;
@@ -192,7 +185,6 @@
       justify-content: center;
       isolation: isolate;
     }
-    /* soft contact shadow so the jar stands on a surface instead of floating */
     .welcome__jarwrap::after {
       content: '';
       position: absolute;
@@ -213,7 +205,6 @@
       opacity: 0;
       animation: jarReveal 3.6s cubic-bezier(.33,0,.2,1) 1.4s forwards;
     }
-    /* the jar condenses out of the haze as the first flowers reach it */
     @keyframes jarReveal {
       0%   { opacity: 0;    filter: blur(14px) drop-shadow(0 6px 6px rgba(80,60,35,0)); transform: scale(0.97); }
       55%  { opacity: 0.75; filter: blur(4px)  drop-shadow(0 6px 6px rgba(80,60,35,0.08)); }
@@ -262,8 +253,6 @@
     .auth-button:hover { background: #4a7d4a; }
   </style>
   <script>
-    // every so often a tiny numeral lifts off the watch face, drifts down, blooms into a flower
-    // mid-fall and slips into the jar's mouth
     (function () {
       var layer = document.getElementById('drift');
       var watch = document.getElementById('watch');
@@ -281,7 +270,6 @@
         var num = n % 12 + 1, ang = (num * 30 - 90 - 8) * Math.PI / 180, rad = w.width * 0.19;
         var x0 = w.left + w.width * 0.485 + Math.cos(ang) * rad, y0 = w.top + w.height * 0.44 + Math.sin(ang) * rad;
         var x3 = j.left + j.width * 0.5, y3 = j.top + j.height * 0.04;
-        // resting spot on top of the pile already in the jar (pile surface sits ~53–58% down)
         var xl = j.left + j.width * (0.26 + Math.random() * 0.48), yl = j.top + j.height * (0.53 + Math.random() * 0.05);
         var xn = j.left + j.width * 0.5, yn = j.top + j.height * 0.24;
         var cx1 = x0 + (x3 - x0) * 0.15 - 40 + Math.random() * 60, cy1 = y0 + (y3 - y0) * 0.45;
@@ -300,7 +288,6 @@
             x = u*u*u*x0 + 3*u*u*q*cx1 + 3*u*q*q*cx2 + q*q*q*x3;
             y = u*u*u*y0 + 3*u*u*q*cy1 + 3*u*q*q*cy2 + q*q*q*y3;
           } else {
-            // straight down the neck, then ease out across to the resting spot and lie flat
             var q2 = (t - P) / (1 - P);
             if (q2 < 0.4) { var a1 = q2 / 0.4; x = x3 + (xn - x3) * a1; y = y3 + (yn - y3) * a1; }
             else { var a2 = (q2 - 0.4) / 0.6, e = 1 - (1 - a2) * (1 - a2); x = xn + (xl - xn) * e; y = yn + (yl - yn) * e; sy = 1 - (1 - flat) * e; }
@@ -333,19 +320,21 @@
     const SUPABASE_URL = 'https://rkyawxfzfueqfgzgkkkt.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJreWF3eGZ6ZnVlcWZnemdramt0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjQ2Njc5NDEsImV4cCI6MjA0MDI0Mzk0MX0.vgKBz3hHx8hFMJm7ux7XdX5RI5zWY85yTQJSb6s4BM8';
 
-    if (!window.horrecoSupabase) {
-      window.horrecoSupabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    }
-    const supabase = window.horrecoSupabase;
+    let supabase = null;
+    let supabaseReady = false;
 
-    // Check if already logged in
-    async function checkAuth() {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        window.location.href = 'dashboard.html';
+    // Wait for Supabase to load
+    async function initSupabase() {
+      if (typeof window.supabase === 'undefined') {
+        setTimeout(initSupabase, 100);
+        return;
       }
+      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      supabaseReady = true;
+      checkAuth();
     }
-    checkAuth();
+
+    initSupabase();
 
     function openAuthModal() {
       document.getElementById('auth-modal').classList.add('active');
@@ -362,7 +351,19 @@
       document.getElementById(tab + '-form').classList.add('active');
     }
 
+    async function checkAuth() {
+      if (!supabaseReady || !supabase) return;
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        window.location.href = 'dashboard.html';
+      }
+    }
+
     async function handleSignup() {
+      if (!supabaseReady || !supabase) {
+        alert('Supabase is still loading. Please try again.');
+        return;
+      }
       const email = document.getElementById('signup-email').value.trim();
       const password = document.getElementById('signup-password').value;
       const errorEl = document.getElementById('signup-error');
@@ -382,6 +383,10 @@
     }
 
     async function handleSignin() {
+      if (!supabaseReady || !supabase) {
+        alert('Supabase is still loading. Please try again.');
+        return;
+      }
       const email = document.getElementById('signin-email').value.trim();
       const password = document.getElementById('signin-password').value;
       const errorEl = document.getElementById('signin-error');
