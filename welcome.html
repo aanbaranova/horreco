@@ -320,21 +320,15 @@
     const SUPABASE_URL = 'https://rkyawxfzfueqfgzgkkkt.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJreWF3eGZ6ZnVlcWZnemdramt0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjQ2Njc5NDEsImV4cCI6MjA0MDI0Mzk0MX0.vgKBz3hHx8hFMJm7ux7XdX5RI5zWY85yTQJSb6s4BM8';
 
-    let supabase = null;
-    let supabaseReady = false;
+    window.sbClient = null;
 
-    // Wait for Supabase to load
-    async function initSupabase() {
-      if (typeof window.supabase === 'undefined') {
-        setTimeout(initSupabase, 100);
-        return;
+    // Initialize Supabase when the library loads
+    document.addEventListener('DOMContentLoaded', function() {
+      if (window.supabase) {
+        window.sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        checkAuth();
       }
-      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-      supabaseReady = true;
-      checkAuth();
-    }
-
-    initSupabase();
+    });
 
     function openAuthModal() {
       document.getElementById('auth-modal').classList.add('active');
@@ -352,15 +346,19 @@
     }
 
     async function checkAuth() {
-      if (!supabaseReady || !supabase) return;
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        window.location.href = 'dashboard.html';
+      if (!window.sbClient) return;
+      try {
+        const { data: { session } } = await window.sbClient.auth.getSession();
+        if (session) {
+          window.location.href = 'dashboard.html';
+        }
+      } catch (e) {
+        console.error('Auth check failed:', e);
       }
     }
 
     async function handleSignup() {
-      if (!supabaseReady || !supabase) {
+      if (!window.sbClient) {
         alert('Supabase is still loading. Please try again.');
         return;
       }
@@ -373,17 +371,20 @@
         return;
       }
 
-      const { data, error } = await supabase.auth.signUp({ email, password });
-      if (error) {
-        errorEl.textContent = error.message;
-        return;
+      try {
+        const { data, error } = await window.sbClient.auth.signUp({ email, password });
+        if (error) {
+          errorEl.textContent = error.message;
+          return;
+        }
+        window.location.href = 'dashboard.html';
+      } catch (e) {
+        errorEl.textContent = 'Sign up failed: ' + e.message;
       }
-
-      window.location.href = 'dashboard.html';
     }
 
     async function handleSignin() {
-      if (!supabaseReady || !supabase) {
+      if (!window.sbClient) {
         alert('Supabase is still loading. Please try again.');
         return;
       }
@@ -396,15 +397,17 @@
         return;
       }
 
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) {
-        errorEl.textContent = error.message;
-        return;
+      try {
+        const { data, error } = await window.sbClient.auth.signInWithPassword({ email, password });
+        if (error) {
+          errorEl.textContent = error.message;
+          return;
+        }
+        window.location.href = 'dashboard.html';
+      } catch (e) {
+        errorEl.textContent = 'Sign in failed: ' + e.message;
       }
-
-      window.location.href = 'dashboard.html';
     }
   </script>
 </body>
 </html>
-<!-- Cache buster: 2026-10-08T12:11:00Z -->
