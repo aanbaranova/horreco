@@ -123,10 +123,14 @@
     const SUPABASE_URL = 'https://rkyawxfzfueqfgzgkkkt.supabase.co';
    const SUPABASE_KEY = 'sb_publishable_29NoCpu3W89C8fueHo5_Rw_QWcnY48w';;
 
-    if (!window.horrecoSupabase) {
-      window.horrecoSupabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    }
-    const supabase = window.horrecoSupabase;
+        let supabase;
+    
+    document.addEventListener('DOMContentLoaded', function() {
+      if (window.supabase && !window.horrecoSupabase) {
+        window.horrecoSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      }
+      supabase = window.horrecoSupabase;
+    });
 
     let selectedJarType = 'flowers';
 
