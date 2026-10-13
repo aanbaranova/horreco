@@ -11,8 +11,9 @@
 <body>
   <div class="page dashboard">
     <a class="back-btn" href="welcome.html" aria-label="Back" title="Back">&lsaquo;</a>
-    <header class="dashboard__header">
+    <header class="dashboard__header" style="display:flex;justify-content:space-between;align-items:center">
       <h1 class="dashboard__title">Your projects</h1>
+      <button id="auth-btn" style="padding:10px 20px;background:#c8a882;color:white;border:none;border-radius:8px;cursor:pointer;font-weight:600">Sign In</button>
     </header>
 
     <main class="dashboard__grid" id="jar-grid">
@@ -229,8 +230,25 @@
         window.horrecoSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
       }
       supabaseClient = window.horrecoSupabase;
-      loadUserJars();
+      initAuth();
     });
+
+    async function initAuth() {
+      if (!supabaseClient) return;
+      var authBtn = document.getElementById('auth-btn');
+      var { data: { user } } = await supabaseClient.auth.getUser();
+
+      if (user) {
+        authBtn.textContent = 'Sign Out';
+        authBtn.onclick = function() { supabaseClient.auth.signOut().then(() => location.reload()); };
+        loadUserJars();
+      } else {
+        authBtn.textContent = 'Sign In';
+        authBtn.onclick = function() {
+          supabaseClient.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.href } });
+        };
+      }
+    }
 
     async function loadUserJars() {
       if (!supabaseClient) return;
@@ -306,26 +324,39 @@
         var name = document.getElementById('jar-name-input').value.trim();
         if (!name) { alert('Please enter a project name'); return; }
 
-        var { data: { user } } = await supabaseClient.auth.getUser();
-        if (!user) { alert('Please sign in first'); return; }
+        try {
+          var { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+          if (authError || !user) { alert('Please sign in first'); return; }
 
-        var { data, error } = await supabaseClient
-          .from('user_jars')
-          .insert({
-            user_id: user.id,
-            jar_name: name,
-            jar_type: type,
-            created_at: new Date().toISOString()
-          })
-          .select('id')
-          .single();
+          var { data, error } = await supabaseClient
+            .from('user_jars')
+            .insert({
+              user_id: user.id,
+              jar_name: name,
+              jar_type: type,
+              created_at: new Date().toISOString()
+            })
+            .select('id')
+            .single();
 
-        if (error) { alert('Failed to create jar'); return; }
+          if (error) {
+            console.error('Insert error:', error);
+            alert('Failed to create jar: ' + (error.message || 'Unknown error'));
+            return;
+          }
 
-        closeModal();
-        var typeMap = { flowers: 'Flowers', water: 'Water', dandelions: 'Dandelion', feathers: 'Feathers', oranges: 'Orange', plant: 'Plant', bamboo: 'Bamboo', maples: 'Maple', cranes: 'Cranes', envelopes: 'Envelopes' };
-        var file = 'Time Jar - ' + (typeMap[type] || 'Flowers') + '.html';
-        window.location.href = file + '?id=' + encodeURIComponent(data.id);
+          if (!data || !data.id) {
+            alert('Failed to create jar: No ID returned');
+            return;
+          }
+
+          closeModal();
+          alert('Jar created! Reloading...');
+          location.reload();
+        } catch (err) {
+          console.error('Create jar error:', err);
+          alert('Error: ' + err.message);
+        }
       });
     })();
   </script>
