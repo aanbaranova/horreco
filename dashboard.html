@@ -15,168 +15,7 @@
       <h1 class="dashboard__title">Your projects</h1>
     </header>
 
-    <main class="dashboard__grid">
-      <!-- Example existing jar cards — data-driven later -->
-      <a class="jar-card" href="Time Jar - Flowers.dc.html" data-jar-id="deep-work">
-        <div class="jar-card__actions">
-          <button class="jar-card__action-btn" type="button" title="Rename" data-action="rename">&#9998;</button>
-          <button class="jar-card__action-btn" type="button" title="Info" data-action="info">&#9432;</button>
-          <button class="jar-card__action-btn" type="button" title="Reset" data-action="reset">&#8635;</button>
-          <button class="jar-card__action-btn" type="button" title="Delete" data-action="delete">&#128465;</button>
-        </div>
-        <div class="jar-card__thumb--jar">
-          <iframe id="deep-work-thumb-frame" data-src="Time Jar - Flowers.dc.html?thumb=1" scrolling="no" style="position:absolute;border:none;pointer-events:none;transform-origin:top left"></iframe>
-        </div>
-        <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;margin-top:10px;padding:7px 16px 6px;background:#f3e9d2 url('./assets/note_paper.png') center/cover;transform:rotate(-3deg);box-shadow:0 1px 1px rgba(90,70,45,0.12), 0 4px 8px rgba(90,70,45,0.16)">
-          <div class="jar-card__name" style="margin-top:0">Deep Work</div>
-          <div class="jar-card__progress" id="deep-work-progress">62%</div>
-        </div>
-      </a>
-
-      <a class="jar-card" href="Time Jar - Water.dc.html" data-jar-id="water-jar">
-        <div class="jar-card__actions">
-          <button class="jar-card__action-btn" type="button" title="Rename" data-action="rename">&#9998;</button>
-          <button class="jar-card__action-btn" type="button" title="Info" data-action="info">&#9432;</button>
-          <button class="jar-card__action-btn" type="button" title="Reset" data-action="reset">&#8635;</button>
-          <button class="jar-card__action-btn" type="button" title="Delete" data-action="delete">&#128465;</button>
-        </div>
-        <div class="jar-card__thumb--jar">
-          <iframe id="water-jar-thumb-frame" data-src="Time Jar - Water.dc.html?thumb=1" scrolling="no" style="position:absolute;border:none;pointer-events:none;transform-origin:top left"></iframe>
-        </div>
-        <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;margin-top:10px;padding:7px 16px 6px;background:#f3e9d2 url('./assets/note_paper.png') center/cover;transform:rotate(-3deg);box-shadow:0 1px 1px rgba(90,70,45,0.12), 0 4px 8px rgba(90,70,45,0.16)">
-          <div class="jar-card__name" style="margin-top:0">Water Jar</div>
-          <div class="jar-card__progress" id="water-jar-progress">0%</div>
-        </div>
-      </a>
-
-      <a class="jar-card" href="Time Jar - Dandelion.dc.html" data-jar-id="dandelion-jar">
-        <div class="jar-card__actions">
-          <button class="jar-card__action-btn" type="button" title="Rename" data-action="rename">&#9998;</button>
-          <button class="jar-card__action-btn" type="button" title="Info" data-action="info">&#9432;</button>
-          <button class="jar-card__action-btn" type="button" title="Reset" data-action="reset">&#8635;</button>
-          <button class="jar-card__action-btn" type="button" title="Delete" data-action="delete">&#128465;</button>
-        </div>
-        <div class="jar-card__thumb--jar">
-          <iframe id="dandelion-jar-thumb-frame" data-src="Time Jar - Dandelion.dc.html?thumb=1" scrolling="no" style="position:absolute;border:none;pointer-events:none;transform-origin:top left"></iframe>
-        </div>
-        <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;margin-top:10px;padding:7px 16px 6px;background:#f3e9d2 url('./assets/note_paper.png') center/cover;transform:rotate(2deg);box-shadow:0 1px 1px rgba(90,70,45,0.12), 0 4px 8px rgba(90,70,45,0.16)">
-          <div class="jar-card__name" style="margin-top:0">Dandelion Jar</div>
-          <div class="jar-card__progress" id="dandelion-jar-progress">0%</div>
-        </div>
-      </a>
-
-      <a class="jar-card" href="Time Jar - Feathers.dc.html" data-jar-id="feather-jar">
-        <div class="jar-card__actions">
-          <button class="jar-card__action-btn" type="button" title="Rename" data-action="rename">&#9998;</button>
-          <button class="jar-card__action-btn" type="button" title="Info" data-action="info">&#9432;</button>
-          <button class="jar-card__action-btn" type="button" title="Reset" data-action="reset">&#8635;</button>
-          <button class="jar-card__action-btn" type="button" title="Delete" data-action="delete">&#128465;</button>
-        </div>
-        <div class="jar-card__thumb--jar">
-          <iframe id="feather-jar-thumb-frame" data-src="Time Jar - Feathers.dc.html?thumb=1" scrolling="no" style="position:absolute;border:none;pointer-events:none;transform-origin:top left"></iframe>
-        </div>
-        <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;margin-top:10px;padding:7px 16px 6px;background:#f3e9d2 url('./assets/note_paper.png') center/cover;transform:rotate(-2deg);box-shadow:0 1px 1px rgba(90,70,45,0.12), 0 4px 8px rgba(90,70,45,0.16)">
-          <div class="jar-card__name" style="margin-top:0">Feather Jar</div>
-          <div class="jar-card__progress" id="feather-jar-progress">0m</div>
-        </div>
-      </a>
-
-      <a class="jar-card" href="Time Jar - Orange.dc.html" data-jar-id="orange-jar">
-        <div class="jar-card__actions">
-          <button class="jar-card__action-btn" type="button" title="Rename" data-action="rename">&#9998;</button>
-          <button class="jar-card__action-btn" type="button" title="Info" data-action="info">&#9432;</button>
-          <button class="jar-card__action-btn" type="button" title="Reset" data-action="reset">&#8635;</button>
-          <button class="jar-card__action-btn" type="button" title="Delete" data-action="delete">&#128465;</button>
-        </div>
-        <div class="jar-card__thumb--jar">
-          <iframe id="orange-jar-thumb-frame" data-src="Time Jar - Orange.dc.html?thumb=1" scrolling="no" style="position:absolute;border:none;pointer-events:none;transform-origin:top left"></iframe>
-        </div>
-        <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;margin-top:10px;padding:7px 16px 6px;background:#f3e9d2 url('./assets/note_paper.png') center/cover;transform:rotate(3deg);box-shadow:0 1px 1px rgba(90,70,45,0.12), 0 4px 8px rgba(90,70,45,0.16)">
-          <div class="jar-card__name" style="margin-top:0">Orange Jar</div>
-          <div class="jar-card__progress" id="orange-jar-progress">0m</div>
-        </div>
-      </a>
-
-      <a class="jar-card" href="Time Jar - Plant.dc.html" data-jar-id="plant-jar">
-        <div class="jar-card__actions">
-          <button class="jar-card__action-btn" type="button" title="Rename" data-action="rename">&#9998;</button>
-          <button class="jar-card__action-btn" type="button" title="Info" data-action="info">&#9432;</button>
-          <button class="jar-card__action-btn" type="button" title="Reset" data-action="reset">&#8635;</button>
-          <button class="jar-card__action-btn" type="button" title="Delete" data-action="delete">&#128465;</button>
-        </div>
-        <div class="jar-card__thumb--jar">
-          <iframe id="plant-jar-thumb-frame" data-src="Time Jar - Plant.dc.html?thumb=1" scrolling="no" style="position:absolute;border:none;pointer-events:none;transform-origin:top left"></iframe>
-        </div>
-        <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;margin-top:10px;padding:7px 16px 6px;background:#f3e9d2 url('./assets/note_paper.png') center/cover;transform:rotate(-1.5deg);box-shadow:0 1px 1px rgba(90,70,45,0.12), 0 4px 8px rgba(90,70,45,0.16)">
-          <div class="jar-card__name" style="margin-top:0">Plant Jar</div>
-          <div class="jar-card__progress" id="plant-jar-progress">0m</div>
-        </div>
-      </a>
-
-      <a class="jar-card" href="Time Jar - Bamboo.dc.html" data-jar-id="bamboo-jar">
-        <div class="jar-card__actions">
-          <button class="jar-card__action-btn" type="button" title="Rename" data-action="rename">&#9998;</button>
-          <button class="jar-card__action-btn" type="button" title="Info" data-action="info">&#9432;</button>
-          <button class="jar-card__action-btn" type="button" title="Reset" data-action="reset">&#8635;</button>
-          <button class="jar-card__action-btn" type="button" title="Delete" data-action="delete">&#128465;</button>
-        </div>
-        <div class="jar-card__thumb--jar">
-          <iframe id="bamboo-jar-thumb-frame" data-src="Time Jar - Bamboo.dc.html?thumb=1" scrolling="no" style="position:absolute;border:none;pointer-events:none;transform-origin:top left"></iframe>
-        </div>
-        <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;margin-top:10px;padding:7px 16px 6px;background:#f3e9d2 url('./assets/note_paper.png') center/cover;transform:rotate(2.5deg);box-shadow:0 1px 1px rgba(90,70,45,0.12), 0 4px 8px rgba(90,70,45,0.16)">
-          <div class="jar-card__name" style="margin-top:0">Bamboo Jar</div>
-          <div class="jar-card__progress" id="bamboo-jar-progress">0m</div>
-        </div>
-      </a>
-
-      <a class="jar-card" href="Time Jar - Maple.dc.html" data-jar-id="maple-jar">
-        <div class="jar-card__actions">
-          <button class="jar-card__action-btn" type="button" title="Rename" data-action="rename">&#9998;</button>
-          <button class="jar-card__action-btn" type="button" title="Info" data-action="info">&#9432;</button>
-          <button class="jar-card__action-btn" type="button" title="Reset" data-action="reset">&#8635;</button>
-          <button class="jar-card__action-btn" type="button" title="Delete" data-action="delete">&#128465;</button>
-        </div>
-        <div class="jar-card__thumb--jar">
-          <iframe id="maple-jar-thumb-frame" data-src="Time Jar - Maple.dc.html?thumb=1" scrolling="no" style="position:absolute;border:none;pointer-events:none;transform-origin:top left"></iframe>
-        </div>
-        <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;margin-top:10px;padding:7px 16px 6px;background:#f3e9d2 url('./assets/note_paper.png') center/cover;transform:rotate(-2.5deg);box-shadow:0 1px 1px rgba(90,70,45,0.12), 0 4px 8px rgba(90,70,45,0.16)">
-          <div class="jar-card__name" style="margin-top:0">Maple Jar</div>
-          <div class="jar-card__progress" id="maple-jar-progress">0m</div>
-        </div>
-      </a>
-
-      <a class="jar-card" href="Time Jar - Cranes.dc.html" data-jar-id="crane-jar">
-        <div class="jar-card__actions">
-          <button class="jar-card__action-btn" type="button" title="Rename" data-action="rename">&#9998;</button>
-          <button class="jar-card__action-btn" type="button" title="Info" data-action="info">&#9432;</button>
-          <button class="jar-card__action-btn" type="button" title="Reset" data-action="reset">&#8635;</button>
-          <button class="jar-card__action-btn" type="button" title="Delete" data-action="delete">&#128465;</button>
-        </div>
-        <div class="jar-card__thumb--jar">
-          <iframe id="crane-jar-thumb-frame" data-src="Time Jar - Cranes.dc.html?thumb=1" scrolling="no" style="position:absolute;border:none;pointer-events:none;transform-origin:top left"></iframe>
-        </div>
-        <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;margin-top:10px;padding:7px 16px 6px;background:#f3e9d2 url('./assets/note_paper.png') center/cover;transform:rotate(1.5deg);box-shadow:0 1px 1px rgba(90,70,45,0.12), 0 4px 8px rgba(90,70,45,0.16)">
-          <div class="jar-card__name" style="margin-top:0">Crane Jar</div>
-          <div class="jar-card__progress" id="crane-jar-progress">0m</div>
-        </div>
-      </a>
-
-      <a class="jar-card" href="Time Jar - Envelopes.dc.html" data-jar-id="envelope-jar">
-        <div class="jar-card__actions">
-          <button class="jar-card__action-btn" type="button" title="Rename" data-action="rename">&#9998;</button>
-          <button class="jar-card__action-btn" type="button" title="Info" data-action="info">&#9432;</button>
-          <button class="jar-card__action-btn" type="button" title="Reset" data-action="reset">&#8635;</button>
-          <button class="jar-card__action-btn" type="button" title="Delete" data-action="delete">&#128465;</button>
-        </div>
-        <div class="jar-card__thumb--jar">
-          <iframe id="envelope-jar-thumb-frame" data-src="Time Jar - Envelopes.dc.html?thumb=1" scrolling="no" style="position:absolute;border:none;pointer-events:none;transform-origin:top left"></iframe>
-        </div>
-        <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;margin-top:10px;padding:7px 16px 6px;background:#f3e9d2 url('./assets/note_paper.png') center/cover;transform:rotate(-3.5deg);box-shadow:0 1px 1px rgba(90,70,45,0.12), 0 4px 8px rgba(90,70,45,0.16)">
-          <div class="jar-card__name" style="margin-top:0">Envelope Jar</div>
-          <div class="jar-card__progress" id="envelope-jar-progress">0m</div>
-        </div>
-      </a>
-
+    <main class="dashboard__grid" id="jar-grid">
       <!-- Create new project -->
       <button class="jar-card jar-card--new" id="create-project-btn" type="button">
         <span class="jar-card--new__plus">+</span>
@@ -390,7 +229,50 @@
         window.horrecoSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
       }
       supabaseClient = window.horrecoSupabase;
+      loadUserJars();
     });
+
+    async function loadUserJars() {
+      if (!supabaseClient) return;
+      var { data: { user } } = await supabaseClient.auth.getUser();
+      if (!user) return;
+
+      var { data: jars, error } = await supabaseClient
+        .from('user_jars')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (error || !jars) return;
+
+      var grid = document.getElementById('jar-grid');
+      var createBtn = document.getElementById('create-project-btn');
+
+      jars.forEach(function(jar) {
+        var typeMap = { flowers: 'Flowers', water: 'Water', dandelions: 'Dandelion', feathers: 'Feathers', oranges: 'Orange', plant: 'Plant', bamboo: 'Bamboo', maples: 'Maple', cranes: 'Cranes', envelopes: 'Envelopes' };
+        var file = 'Time Jar - ' + (typeMap[jar.jar_type] || 'Flowers') + '.html';
+        var url = file + '?id=' + encodeURIComponent(jar.id);
+
+        var card = document.createElement('a');
+        card.className = 'jar-card';
+        card.href = url;
+        card.dataset.jarId = jar.id;
+        card.innerHTML =
+          '<div class="jar-card__actions">' +
+            '<button class="jar-card__action-btn" type="button" title="Rename" data-action="rename">&#9998;</button>' +
+            '<button class="jar-card__action-btn" type="button" title="Info" data-action="info">&#9432;</button>' +
+            '<button class="jar-card__action-btn" type="button" title="Reset" data-action="reset">&#8635;</button>' +
+            '<button class="jar-card__action-btn" type="button" title="Delete" data-action="delete">&#128465;</button>' +
+          '</div>' +
+          '<div class="jar-card__thumb--jar"><iframe data-src="' + url + '&thumb=1" scrolling="no" style="position:absolute;border:none;pointer-events:none;transform-origin:top left;width:400px;height:560px"></iframe></div>' +
+          '<div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;margin-top:10px;padding:7px 16px 6px;background:#f3e9d2 url(\'./assets/note_paper.png\') center/cover;transform:rotate(' + (((jar.id.length * 7) % 6) - 3) + 'deg);box-shadow:0 1px 1px rgba(90,70,45,0.12), 0 4px 8px rgba(90,70,45,0.16)">' +
+            '<div class="jar-card__name" style="margin-top:0">' + (jar.jar_name || (typeMap[jar.jar_type] || 'Jar')) + '</div>' +
+            '<div class="jar-card__progress">0m</div>' +
+          '</div>';
+
+        grid.insertBefore(card, createBtn);
+      });
+    }
 
     (function () {
       var modal = document.getElementById('create-project-modal');
@@ -447,389 +329,7 @@
       });
     })();
   </script>
-  <script>
-    // item types a new jar can be filled with — each opens its own themed jar page
-    window.TIMEJAR_TYPES = {
-      flowers: { label: 'Flowers', file: 'Time Jar - Flowers.dc.html' },
-      water: { label: 'Water', file: 'Time Jar - Water.dc.html' },
-      dandelions: { label: 'Dandelion', file: 'Time Jar - Dandelion.dc.html' },
-      feathers: { label: 'Feather', file: 'Time Jar - Feathers.dc.html' },
-      oranges: { label: 'Orange', file: 'Time Jar - Orange.dc.html' },
-      plant: { label: 'Plant', file: 'Time Jar - Plant.dc.html' },
-      bamboo: { label: 'Bamboo', file: 'Time Jar - Bamboo.dc.html' },
-      maples: { label: 'Maple', file: 'Time Jar - Maple.dc.html' },
-      cranes: { label: 'Crane', file: 'Time Jar - Cranes.dc.html' },
-      envelopes: { label: 'Envelope', file: 'Time Jar - Envelopes.dc.html' }
-    };
-    (function () {
-      var list = [];
-      try { list = JSON.parse(localStorage.getItem('timejar_custom_jars') || '[]') || []; } catch (e) {}
-      var createBtn = document.getElementById('create-project-btn');
-      var esc = function (t) { var el = document.createElement('div'); el.textContent = t; return el.innerHTML; };
-      list.forEach(function (j) {
-        var info = window.TIMEJAR_TYPES[j.type];
-        if (!info || !/^[\w-]+$/.test(j.id)) return;
-        var url = info.file + '?id=' + encodeURIComponent(j.id);
-        var card = document.createElement('a');
-        card.className = 'jar-card';
-        card.href = url;
-        card.dataset.jarId = j.id;
-        card.innerHTML =
-          '<div class="jar-card__actions">' +
-            '<button class="jar-card__action-btn" type="button" title="Rename" data-action="rename">&#9998;</button>' +
-            '<button class="jar-card__action-btn" type="button" title="Info" data-action="info">&#9432;</button>' +
-            '<button class="jar-card__action-btn" type="button" title="Reset" data-action="reset">&#8635;</button>' +
-            '<button class="jar-card__action-btn" type="button" title="Delete" data-action="delete">&#128465;</button>' +
-          '</div>' +
-          '<div class="jar-card__thumb--jar"><iframe data-src="' + url + '&thumb=1" scrolling="no" style="position:absolute;border:none;pointer-events:none;transform-origin:top left;width:400px;height:560px"></iframe></div>' +
-          '<div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;margin-top:10px;padding:7px 16px 6px;background:#f3e9d2 url(\'./assets/note_paper.png\') center/cover;transform:rotate(' + (((j.id.length * 7) % 6) - 3) + 'deg);box-shadow:0 1px 1px rgba(90,70,45,0.12), 0 4px 8px rgba(90,70,45,0.16)">' +
-            '<div class="jar-card__name" style="margin-top:0">' + esc(j.name || (info.label + ' Jar')) + '</div>' +
-            '<div class="jar-card__progress">0m</div>' +
-          '</div>';
-        createBtn.parentNode.insertBefore(card, createBtn);
-        var data = null;
-        try { data = JSON.parse(localStorage.getItem('timejar_state_' + j.id) || 'null'); } catch (e) {}
-        var mins = data && typeof data.totalMinutesInvested === 'number' ? data.totalMinutesInvested : 0;
-        var h = Math.floor(mins / 60), m = mins % 60;
-        card.querySelector('.jar-card__progress').textContent = h > 0 ? (h + 'h ' + m + 'm') : (m + 'm');
-        var thumb = card.querySelector('.jar-card__thumb--jar');
-        var frame = thumb.querySelector('iframe');
-        frame.style.transform = 'scale(' + ((thumb.clientWidth || 60) / 200) + ') translate(-100px, -200px)';
-        var fit = function () {
-          try {
-            var img = frame.contentDocument && frame.contentDocument.querySelector('img[alt="jar"]');
-            if (!img) return;
-            var r = img.getBoundingClientRect();
-            if (!r.width || !r.height) return;
-            var tw = thumb.clientWidth || 60, th = thumb.clientHeight || 90;
-            var s = Math.min(tw / r.width, th / r.height);
-            var offX = (tw - r.width * s) / 2 / s;
-            var offY = (th - r.height * s) / s;
-            frame.style.transform = 'scale(' + s + ') translate(' + (offX - r.left) + 'px, ' + (offY - r.top) + 'px)';
-          } catch (err) {}
-        };
-        frame.addEventListener('load', function () { fit(); setTimeout(fit, 400); });
-        [0, 300, 1000, 2500].forEach(function (t) { setTimeout(fit, t); });
-      });
-    })();
-  </script>
-  <script>
-    (function () {
-      try {
-        var data = JSON.parse(localStorage.getItem('timejar_state_deep-work') || 'null');
-        var pct = data && typeof data.fillPercent === 'number' ? data.fillPercent : 0;
-        var mins = data && typeof data.totalMinutesInvested === 'number' ? data.totalMinutesInvested : 0;
-        var h = Math.floor(mins / 60), m = mins % 60;
-        document.getElementById('deep-work-progress').textContent = h > 0 ? (h + 'h ' + m + 'm') : (m + 'm');
-
-        var thumb = document.querySelector('.jar-card__thumb--jar');
-        var frame = document.getElementById('deep-work-thumb-frame');
-        var scale = thumb.clientWidth / 200;
-        frame.style.width = '400px';
-        frame.style.height = '560px';
-        scale = (thumb.clientWidth || 60) / 200;
-        frame.style.transform = 'scale(' + scale + ') translate(-100px, -200px)';
-        // measure the real bottle inside the page and fit it fully (bottom included) in the thumb
-        var fitFlowers = function () {
-          try {
-            var img = frame.contentDocument && frame.contentDocument.querySelector('img[alt="jar"]');
-            if (!img) return;
-            var r = img.getBoundingClientRect();
-            if (!r.width || !r.height) return;
-            var tw = thumb.clientWidth || 60, th = thumb.clientHeight || 90;
-            var s = Math.min(tw / r.width, th / r.height);
-            var offX = (tw - r.width * s) / 2 / s;
-            var offY = (th - r.height * s) / s;
-            frame.style.transform = 'scale(' + s + ') translate(' + (offX - r.left) + 'px, ' + (offY - r.top) + 'px)';
-          } catch (err) {}
-        };
-        frame.addEventListener('load', function () { fitFlowers(); setTimeout(fitFlowers, 400); setTimeout(fitFlowers, 1200); });
-        [0, 300, 1000, 2500].forEach(function (t) { setTimeout(fitFlowers, t); });
-      } catch (e) {}
-    })();
-  </script>
-  <script>
-    (function () {
-      try {
-        var data = JSON.parse(localStorage.getItem('timejar_state_deep-work-water') || 'null');
-        var pct = data && typeof data.fillPercent === 'number' ? data.fillPercent : 0;
-        var mins = data && typeof data.totalMinutesInvested === 'number' ? data.totalMinutesInvested : 0;
-        var h = Math.floor(mins / 60), m = mins % 60;
-        document.getElementById('water-jar-progress').textContent = h > 0 ? (h + 'h ' + m + 'm') : (m + 'm');
-
-        var thumb = document.getElementById('water-jar-thumb-frame').parentElement;
-        var frame = document.getElementById('water-jar-thumb-frame');
-        var scale = thumb.clientWidth / 200;
-        frame.style.width = '400px';
-        frame.style.height = '540px';
-        frame.style.transform = 'scale(' + scale + ') translate(-100px, -180px)';
-      } catch (e) {}
-    })();
-  </script>
-  <script>
-    (function () {
-      try {
-        var data = JSON.parse(localStorage.getItem('timejar_state_dandelion_v2') || 'null');
-        var pct = data && typeof data.fillPercent === 'number' ? data.fillPercent : 0;
-        var mins = data && typeof data.totalMinutesInvested === 'number' ? data.totalMinutesInvested : 0;
-        var h = Math.floor(mins / 60), m = mins % 60;
-        document.getElementById('dandelion-jar-progress').textContent = h > 0 ? (h + 'h ' + m + 'm') : (m + 'm');
-
-        var thumb = document.getElementById('dandelion-jar-thumb-frame').parentElement;
-        var frame = document.getElementById('dandelion-jar-thumb-frame');
-        var scale = (thumb.clientWidth || 60) / 200;
-        frame.style.width = '400px';
-        frame.style.height = '560px';
-        frame.style.transform = 'scale(' + scale + ') translate(-100px, -200px)';
-        var fitSeeds = function () {
-          try {
-            var img = frame.contentDocument && frame.contentDocument.querySelector('img[alt="jar"]');
-            if (!img) return;
-            var r = img.getBoundingClientRect();
-            if (!r.width || !r.height) return;
-            var tw = thumb.clientWidth || 60, th = thumb.clientHeight || 90;
-            var s = Math.min(tw / r.width, th / r.height);
-            var offX = (tw - r.width * s) / 2 / s;
-            var offY = (th - r.height * s) / s;
-            frame.style.transform = 'scale(' + s + ') translate(' + (offX - r.left) + 'px, ' + (offY - r.top) + 'px)';
-          } catch (err) {}
-        };
-        frame.addEventListener('load', function () { fitSeeds(); setTimeout(fitSeeds, 400); });
-        [0, 300, 1000, 2500].forEach(function (t) { setTimeout(fitSeeds, t); });
-      } catch (e) {}
-    })();
-  </script>
-  <script>
-    (function () {
-      try {
-        var data = JSON.parse(localStorage.getItem('timejar_state_feather-jar') || 'null');
-        var pct = data && typeof data.fillPercent === 'number' ? data.fillPercent : 0;
-        var mins = data && typeof data.totalMinutesInvested === 'number' ? data.totalMinutesInvested : 0;
-        var h = Math.floor(mins / 60), m = mins % 60;
-        document.getElementById('feather-jar-progress').textContent = h > 0 ? (h + 'h ' + m + 'm') : (m + 'm');
-
-        var thumb = document.getElementById('feather-jar-thumb-frame').parentElement;
-        var frame = document.getElementById('feather-jar-thumb-frame');
-        var scale = (thumb.clientWidth || 60) / 200;
-        frame.style.width = '400px';
-        frame.style.height = '560px';
-        frame.style.transform = 'scale(' + scale + ') translate(-100px, -200px)';
-        var fitSeeds = function () {
-          try {
-            var img = frame.contentDocument && frame.contentDocument.querySelector('img[alt="jar"]');
-            if (!img) return;
-            var r = img.getBoundingClientRect();
-            if (!r.width || !r.height) return;
-            var tw = thumb.clientWidth || 60, th = thumb.clientHeight || 90;
-            var s = Math.min(tw / r.width, th / r.height);
-            var offX = (tw - r.width * s) / 2 / s;
-            var offY = (th - r.height * s) / s;
-            frame.style.transform = 'scale(' + s + ') translate(' + (offX - r.left) + 'px, ' + (offY - r.top) + 'px)';
-          } catch (err) {}
-        };
-        frame.addEventListener('load', function () { fitSeeds(); setTimeout(fitSeeds, 400); });
-        [0, 300, 1000, 2500].forEach(function (t) { setTimeout(fitSeeds, t); });
-      } catch (e) {}
-    })();
-  </script>
-  <script>
-    (function () {
-      try {
-        var data = JSON.parse(localStorage.getItem('timejar_state_orange-jar') || 'null');
-        var pct = data && typeof data.fillPercent === 'number' ? data.fillPercent : 0;
-        var mins = data && typeof data.totalMinutesInvested === 'number' ? data.totalMinutesInvested : 0;
-        var h = Math.floor(mins / 60), m = mins % 60;
-        document.getElementById('orange-jar-progress').textContent = h > 0 ? (h + 'h ' + m + 'm') : (m + 'm');
-
-        var thumb = document.getElementById('orange-jar-thumb-frame').parentElement;
-        var frame = document.getElementById('orange-jar-thumb-frame');
-        var scale = (thumb.clientWidth || 60) / 200;
-        frame.style.width = '400px';
-        frame.style.height = '560px';
-        frame.style.transform = 'scale(' + scale + ') translate(-100px, -200px)';
-        var fitSeeds = function () {
-          try {
-            var img = frame.contentDocument && frame.contentDocument.querySelector('img[alt="jar"]');
-            if (!img) return;
-            var r = img.getBoundingClientRect();
-            if (!r.width || !r.height) return;
-            var tw = thumb.clientWidth || 60, th = thumb.clientHeight || 90;
-            var s = Math.min(tw / r.width, th / r.height);
-            var offX = (tw - r.width * s) / 2 / s;
-            var offY = (th - r.height * s) / s;
-            frame.style.transform = 'scale(' + s + ') translate(' + (offX - r.left) + 'px, ' + (offY - r.top) + 'px)';
-          } catch (err) {}
-        };
-        frame.addEventListener('load', function () { fitSeeds(); setTimeout(fitSeeds, 400); });
-        [0, 300, 1000, 2500].forEach(function (t) { setTimeout(fitSeeds, t); });
-      } catch (e) {}
-    })();
-  </script>
-  <script>
-    (function () {
-      try {
-        var data = JSON.parse(localStorage.getItem('timejar_state_envelope-jar') || 'null');
-        var pct = data && typeof data.fillPercent === 'number' ? data.fillPercent : 0;
-        var mins = data && typeof data.totalMinutesInvested === 'number' ? data.totalMinutesInvested : 0;
-        var h = Math.floor(mins / 60), m = mins % 60;
-        document.getElementById('envelope-jar-progress').textContent = h > 0 ? (h + 'h ' + m + 'm') : (m + 'm');
-
-        var thumb = document.getElementById('envelope-jar-thumb-frame').parentElement;
-        var frame = document.getElementById('envelope-jar-thumb-frame');
-        var scale = (thumb.clientWidth || 60) / 200;
-        frame.style.width = '400px';
-        frame.style.height = '560px';
-        frame.style.transform = 'scale(' + scale + ') translate(-100px, -200px)';
-        var fitSeeds = function () {
-          try {
-            var img = frame.contentDocument && frame.contentDocument.querySelector('img[alt="jar"]');
-            if (!img) return;
-            var r = img.getBoundingClientRect();
-            if (!r.width || !r.height) return;
-            var tw = thumb.clientWidth || 60, th = thumb.clientHeight || 90;
-            var s = Math.min(tw / r.width, th / r.height);
-            var offX = (tw - r.width * s) / 2 / s;
-            var offY = (th - r.height * s) / s;
-            frame.style.transform = 'scale(' + s + ') translate(' + (offX - r.left) + 'px, ' + (offY - r.top) + 'px)';
-          } catch (err) {}
-        };
-        frame.addEventListener('load', function () { fitSeeds(); setTimeout(fitSeeds, 400); });
-        [0, 300, 1000, 2500].forEach(function (t) { setTimeout(fitSeeds, t); });
-      } catch (e) {}
-    })();
-  </script>
-  <script>
-    (function () {
-      try {
-        var data = JSON.parse(localStorage.getItem('timejar_state_crane-jar') || 'null');
-        var pct = data && typeof data.fillPercent === 'number' ? data.fillPercent : 0;
-        var mins = data && typeof data.totalMinutesInvested === 'number' ? data.totalMinutesInvested : 0;
-        var h = Math.floor(mins / 60), m = mins % 60;
-        document.getElementById('crane-jar-progress').textContent = h > 0 ? (h + 'h ' + m + 'm') : (m + 'm');
-
-        var thumb = document.getElementById('crane-jar-thumb-frame').parentElement;
-        var frame = document.getElementById('crane-jar-thumb-frame');
-        var scale = (thumb.clientWidth || 60) / 200;
-        frame.style.width = '400px';
-        frame.style.height = '560px';
-        frame.style.transform = 'scale(' + scale + ') translate(-100px, -200px)';
-        var fitSeeds = function () {
-          try {
-            var img = frame.contentDocument && frame.contentDocument.querySelector('img[alt="jar"]');
-            if (!img) return;
-            var r = img.getBoundingClientRect();
-            if (!r.width || !r.height) return;
-            var tw = thumb.clientWidth || 60, th = thumb.clientHeight || 90;
-            var s = Math.min(tw / r.width, th / r.height);
-            var offX = (tw - r.width * s) / 2 / s;
-            var offY = (th - r.height * s) / s;
-            frame.style.transform = 'scale(' + s + ') translate(' + (offX - r.left) + 'px, ' + (offY - r.top) + 'px)';
-          } catch (err) {}
-        };
-        frame.addEventListener('load', function () { fitSeeds(); setTimeout(fitSeeds, 400); });
-        [0, 300, 1000, 2500].forEach(function (t) { setTimeout(fitSeeds, t); });
-      } catch (e) {}
-    })();
-  </script>
-  <script>
-    (function () {
-      try {
-        var data = JSON.parse(localStorage.getItem('timejar_state_maple-jar') || 'null');
-        var pct = data && typeof data.fillPercent === 'number' ? data.fillPercent : 0;
-        var mins = data && typeof data.totalMinutesInvested === 'number' ? data.totalMinutesInvested : 0;
-        var h = Math.floor(mins / 60), m = mins % 60;
-        document.getElementById('maple-jar-progress').textContent = h > 0 ? (h + 'h ' + m + 'm') : (m + 'm');
-
-        var thumb = document.getElementById('maple-jar-thumb-frame').parentElement;
-        var frame = document.getElementById('maple-jar-thumb-frame');
-        var scale = (thumb.clientWidth || 60) / 200;
-        frame.style.width = '400px';
-        frame.style.height = '560px';
-        frame.style.transform = 'scale(' + scale + ') translate(-100px, -200px)';
-        var fitSeeds = function () {
-          try {
-            var img = frame.contentDocument && frame.contentDocument.querySelector('img[alt="jar"]');
-            if (!img) return;
-            var r = img.getBoundingClientRect();
-            if (!r.width || !r.height) return;
-            var tw = thumb.clientWidth || 60, th = thumb.clientHeight || 90;
-            var s = Math.min(tw / r.width, th / r.height);
-            var offX = (tw - r.width * s) / 2 / s;
-            var offY = (th - r.height * s) / s;
-            frame.style.transform = 'scale(' + s + ') translate(' + (offX - r.left) + 'px, ' + (offY - r.top) + 'px)';
-          } catch (err) {}
-        };
-        frame.addEventListener('load', function () { fitSeeds(); setTimeout(fitSeeds, 400); });
-        [0, 300, 1000, 2500].forEach(function (t) { setTimeout(fitSeeds, t); });
-      } catch (e) {}
-    })();
-  </script>
-  <script>
-    (function () {
-      try {
-        var data = JSON.parse(localStorage.getItem('timejar_state_plant-jar') || 'null');
-        var pct = data && typeof data.fillPercent === 'number' ? data.fillPercent : 0;
-        var mins = data && typeof data.totalMinutesInvested === 'number' ? data.totalMinutesInvested : 0;
-        var h = Math.floor(mins / 60), m = mins % 60;
-        document.getElementById('plant-jar-progress').textContent = h > 0 ? (h + 'h ' + m + 'm') : (m + 'm');
-
-        var thumb = document.getElementById('plant-jar-thumb-frame').parentElement;
-        var frame = document.getElementById('plant-jar-thumb-frame');
-        var scale = (thumb.clientWidth || 60) / 200;
-        frame.style.width = '400px';
-        frame.style.height = '560px';
-        frame.style.transform = 'scale(' + scale + ') translate(-100px, -200px)';
-        var fitSeeds = function () {
-          try {
-            var img = frame.contentDocument && frame.contentDocument.querySelector('img[alt="jar"]');
-            if (!img) return;
-            var r = img.getBoundingClientRect();
-            if (!r.width || !r.height) return;
-            var tw = thumb.clientWidth || 60, th = thumb.clientHeight || 90;
-            var s = Math.min(tw / r.width, th / r.height);
-            var offX = (tw - r.width * s) / 2 / s;
-            var offY = (th - r.height * s) / s;
-            frame.style.transform = 'scale(' + s + ') translate(' + (offX - r.left) + 'px, ' + (offY - r.top) + 'px)';
-          } catch (err) {}
-        };
-        frame.addEventListener('load', function () { fitSeeds(); setTimeout(fitSeeds, 400); });
-        [0, 300, 1000, 2500].forEach(function (t) { setTimeout(fitSeeds, t); });
-      } catch (e) {}
-    })();
-  </script>
-  <script>
-    (function () {
-      try {
-        var data = JSON.parse(localStorage.getItem('timejar_state_bamboo-jar') || 'null');
-        var pct = data && typeof data.fillPercent === 'number' ? data.fillPercent : 0;
-        var mins = data && typeof data.totalMinutesInvested === 'number' ? data.totalMinutesInvested : 0;
-        var h = Math.floor(mins / 60), m = mins % 60;
-        document.getElementById('bamboo-jar-progress').textContent = h > 0 ? (h + 'h ' + m + 'm') : (m + 'm');
-
-        var thumb = document.getElementById('bamboo-jar-thumb-frame').parentElement;
-        var frame = document.getElementById('bamboo-jar-thumb-frame');
-        var scale = (thumb.clientWidth || 60) / 200;
-        frame.style.width = '400px';
-        frame.style.height = '560px';
-        frame.style.transform = 'scale(' + scale + ') translate(-100px, -200px)';
-        var fitSeeds = function () {
-          try {
-            var img = frame.contentDocument && frame.contentDocument.querySelector('img[alt="jar"]');
-            if (!img) return;
-            var r = img.getBoundingClientRect();
-            if (!r.width || !r.height) return;
-            var tw = thumb.clientWidth || 60, th = thumb.clientHeight || 90;
-            var s = Math.min(tw / r.width, th / r.height);
-            var offX = (tw - r.width * s) / 2 / s;
-            var offY = (th - r.height * s) / s;
-            frame.style.transform = 'scale(' + s + ') translate(' + (offX - r.left) + 'px, ' + (offY - r.top) + 'px)';
-          } catch (err) {}
-        };
-        frame.addEventListener('load', function () { fitSeeds(); setTimeout(fitSeeds, 400); });
-        [0, 300, 1000, 2500].forEach(function (t) { setTimeout(fitSeeds, t); });
-      } catch (e) {}
-    })();
-  </script>  <script>
+<script>
     (function () {
       function jarStorageKey(jarId) {
         if (jarId === 'water-jar') return 'timejar_state_deep-work-water';
