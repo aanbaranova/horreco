@@ -389,7 +389,10 @@
           errorEl.textContent = error.message;
           return;
         }
-        window.location.href = 'dashboard.html';
+        // Wait a moment for session to be established, then redirect
+        setTimeout(() => {
+          window.location.href = 'dashboard.html';
+        }, 500);
       } catch (e) {
         errorEl.textContent = 'Sign up failed: ' + e.message;
       }
@@ -415,7 +418,10 @@
           errorEl.textContent = error.message;
           return;
         }
-        window.location.href = 'dashboard.html';
+        // Wait a moment for session to be established, then redirect
+        setTimeout(() => {
+          window.location.href = 'dashboard.html';
+        }, 500);
       } catch (e) {
         errorEl.textContent = 'Sign in failed: ' + e.message;
       }
