@@ -11,7 +11,7 @@
     body { margin: 0; background: #f4f7f3; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
     .dashboard { padding: 20px; max-width: 1200px; margin: 0 auto; }
     .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 40px; }
-    .header h1 { margin: 0; font-family: 'Nanum Pen Script', cursive; font-size: 48px; color: #2c3e2f; }
+    .header h1 { margin: 0; font-family: 'Cormorant Garamond', serif; font-size: 48px; color: #2c3e2f; }
     .back-btn { position: fixed; top: 16px; left: 16px; background: rgba(255,255,255,0.3); border: none; padding: 8px 16px; border-radius: 8px; font-size: 24px; cursor: pointer; transition: all 200ms; z-index: 100; }
     .back-btn:hover { background: rgba(255,255,255,0.5); transform: scale(1.05); }
     
@@ -123,13 +123,13 @@
     const SUPABASE_URL = 'https://rkyawxfzfueqfgzgkkkt.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_29NoCpu3W89C8fueHo5_Rw_QWcnY48w';
 
-    let sbClient;
+    let supabase = null;
 
     document.addEventListener('DOMContentLoaded', function() {
       if (window.supabase && !window.horrecoSupabase) {
         window.horrecoSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
       }
-      sbClient = window.horrecoSupabase;
+      supabase = window.horrecoSupabase;
       loadUserJars();
     });
 
@@ -159,13 +159,13 @@
         return;
       }
 
-      const { data: { user } } = await sbClient.auth.getUser();
+      const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         alert('Please sign in first');
         return;
       }
 
-      const { data, error } = await sbClient
+      const { data, error } = await supabase
         .from('user_jars')
         .insert({
           user_id: user.id,
@@ -187,13 +187,13 @@
     }
 
     async function loadUserJars() {
-      const { data: { user } } = await sbClient.auth.getUser();
+      const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         window.location.href = 'welcome.html';
         return;
       }
 
-      const { data: jars, error } = await sbClient
+      const { data: jars, error } = await supabase
         .from('user_jars')
         .select('id, jar_name, jar_type, created_at')
         .eq('user_id', user.id)
@@ -217,6 +217,7 @@
         </a>
       `).join('');
     }
+
   </script>
 </body>
 </html>
