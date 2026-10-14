@@ -187,6 +187,11 @@
     }
 
     async function loadUserJars() {
+      if (!sbClient) {
+        console.error('sbClient not initialized yet');
+        setTimeout(loadUserJars, 500);
+        return;
+      }
       const { data: { user } } = await sbClient.auth.getUser();
       if (!user) {
         window.location.href = 'welcome.html';
