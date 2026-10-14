@@ -349,7 +349,16 @@
 
     document.addEventListener('DOMContentLoaded', function() {
       if (window.supabase) {
-        sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const options = {
+          auth: {
+            storage: localStorage,
+            autoRefreshToken: true,
+            persistSession: true,
+            detectSessionInUrl: false
+          }
+        };
+        sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, options);
+        console.log('Supabase client created with options:', options);
         // Don't auto-redirect on welcome page - let user control the flow
       }
     });
@@ -390,13 +399,30 @@
           return;
         }
         // After sign up, automatically sign them in so they have a session
-        const { error: signInError } = await sbClient.auth.signInWithPassword({ email, password });
+        const { data: sessionData, error: signInError } = await sbClient.auth.signInWithPassword({ email, password });
         if (signInError) {
           errorEl.textContent = 'Account created but sign in failed: ' + signInError.message;
           return;
         }
-        // Now redirect to dashboard
-        window.location.href = 'dashboard.html';
+
+        console.log('=== Sign-up signin response ===');
+        console.log('sessionData keys:', sessionData ? Object.keys(sessionData) : 'null');
+        console.log('sessionData.session:', sessionData?.session);
+        console.log('sessionData.user:', sessionData?.user?.email);
+
+        // The session should now be auto-saved by Supabase client
+        // Wait for it to be persisted
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        // Verify session exists before redirecting
+        const { data: { user } } = await sbClient.auth.getUser();
+        console.log('User after signin:', user);
+
+        if (user) {
+          window.location.href = 'dashboard.html';
+        } else {
+          errorEl.textContent = 'Session not established. Please try again.';
+        }
       } catch (e) {
         errorEl.textContent = 'Sign up failed: ' + e.message;
       }
@@ -417,15 +443,28 @@
       }
 
       try {
-        const { data, error } = await sbClient.auth.signInWithPassword({ email, password });
+        const { data: sessionData, error } = await sbClient.auth.signInWithPassword({ email, password });
         if (error) {
           errorEl.textContent = error.message;
           return;
         }
-        // Wait a moment for session to be established, then redirect
-        setTimeout(() => {
+
+        console.log('=== Sign-in response ===');
+        console.log('sessionData keys:', sessionData ? Object.keys(sessionData) : 'null');
+        console.log('sessionData.session:', sessionData?.session);
+        console.log('sessionData.user:', sessionData?.user?.email);
+
+        // The session should now be auto-saved by Supabase client
+        // Wait for it to be persisted
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        // Verify session exists before redirecting
+        const { data: { user } } = await sbClient.auth.getUser();
+        if (user) {
           window.location.href = 'dashboard.html';
-        }, 500);
+        } else {
+          errorEl.textContent = 'Session not established. Please try again.';
+        }
       } catch (e) {
         errorEl.textContent = 'Sign in failed: ' + e.message;
       }
