@@ -126,8 +126,17 @@
     let sbClient;
 
     document.addEventListener('DOMContentLoaded', async function() {
-      // Create client directly from the supabase object
-      sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      // Create client directly from the supabase object with proper session persistence
+      const options = {
+        auth: {
+          storage: localStorage,
+          autoRefreshToken: true,
+          persistSession: true,
+          detectSessionInUrl: false
+        }
+      };
+      sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, options);
+      console.log('Dashboard: Supabase client created');
       await loadUserJars();
     });
 
@@ -185,40 +194,70 @@
     }
 
     async function loadUserJars() {
+      console.log('loadUserJars called, sbClient:', sbClient);
       if (!sbClient) {
         console.error('sbClient not initialized yet');
         setTimeout(loadUserJars, 500);
         return;
       }
-      const { data: { user } } = await sbClient.auth.getUser();
-      if (!user) {
-        window.location.href = 'welcome.html';
-        return;
+
+      try {
+        // Check localStorage directly for session
+        const session = localStorage.getItem('sb-rkyawxfzfueqfgzgkkkt.supabase.co-auth-token');
+        console.log('localStorage session:', session ? 'found' : 'not found');
+
+        const { data: { user }, error: authError } = await sbClient.auth.getUser();
+        console.log('Auth check - user:', user, 'error:', authError);
+
+        if (authError) {
+          console.error('Auth error:', authError);
+          // If no session in storage, redirect to login
+          if (!session) {
+            console.log('No session found, redirecting to welcome');
+            window.location.href = 'welcome.html';
+            return;
+          }
+          document.getElementById('jars-grid').innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: red;">Auth Error: ' + authError.message + '</p>';
+          return;
+        }
+
+        if (!user) {
+          console.log('No user, redirecting to welcome');
+          window.location.href = 'welcome.html';
+          return;
+        }
+
+        console.log('Fetching jars for user:', user.id);
+        const { data: jars, error } = await sbClient
+          .from('user_jars')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false });
+
+        console.log('Jars query result:', { jars, error });
+
+        if (error) {
+          console.error('Error loading jars:', error);
+          document.getElementById('jars-grid').innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: red;">Error: ' + JSON.stringify(error) + '</p>';
+          return;
+        }
+
+        const grid = document.getElementById('jars-grid');
+        if (!jars || jars.length === 0) {
+          grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #666;">No projects yet. Create one to get started!</p>';
+          return;
+        }
+
+        grid.innerHTML = jars.map(jar => `
+          <a href="jar.html?type=${jar.jar_type}&id=${jar.id}" class="jar-card">
+            <div class="jar-name">${jar.jar_name}</div>
+            <div class="jar-progress">Click to continue</div>
+          </a>
+        `).join('');
+      } catch (e) {
+        console.error('Exception in loadUserJars:', e);
+        document.getElementById('jars-grid').innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: red;">Exception: ' + e.message + '</p>';
       }
-
-      const { data: jars, error } = await sbClient
-        .from('user_jars')
-        .select('id, jar_name, jar_type, created_at')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        console.error('Error loading jars:', error);
-        return;
-      }
-
-      const grid = document.getElementById('jars-grid');
-      if (jars.length === 0) {
-        grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #666;">No projects yet. Create one to get started!</p>';
-        return;
-      }
-
-      grid.innerHTML = jars.map(jar => `
-        <a href="jar.html?type=${jar.jar_type}&id=${jar.id}" class="jar-card">
-          <div class="jar-name">${jar.jar_name}</div>
-          <div class="jar-progress">Click to continue</div>
-        </a>
-      `).join('');
     }
 
   </script>
