@@ -240,13 +240,11 @@
 
       if (user) {
         authBtn.textContent = 'Sign Out';
-        authBtn.onclick = function() { supabaseClient.auth.signOut().then(() => location.reload()); };
+        authBtn.onclick = function() { supabaseClient.auth.signOut().then(() => { window.location.href = 'welcome.html'; }); };
         loadUserJars();
       } else {
-        authBtn.textContent = 'Sign In';
-        authBtn.onclick = function() {
-          supabaseClient.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.href } });
-        };
+        // Not authenticated - redirect to welcome page
+        window.location.href = 'welcome.html';
       }
     }
 
