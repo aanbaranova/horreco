@@ -123,13 +123,13 @@
     const SUPABASE_URL = 'https://rkyawxfzfueqfgzgkkkt.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_29NoCpu3W89C8fueHo5_Rw_QWcnY48w';
 
-    let supabase;
+    let sbClient;
 
     document.addEventListener('DOMContentLoaded', function() {
       if (window.supabase && !window.horrecoSupabase) {
         window.horrecoSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
       }
-      supabase = window.horrecoSupabase;
+      sbClient = window.horrecoSupabase;
       loadUserJars();
     });
 
@@ -159,13 +159,13 @@
         return;
       }
 
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await sbClient.auth.getUser();
       if (!user) {
         alert('Please sign in first');
         return;
       }
 
-      const { data, error } = await supabase
+      const { data, error } = await sbClient
         .from('user_jars')
         .insert({
           user_id: user.id,
@@ -187,13 +187,13 @@
     }
 
     async function loadUserJars() {
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await sbClient.auth.getUser();
       if (!user) {
         window.location.href = 'welcome.html';
         return;
       }
 
-      const { data: jars, error } = await supabase
+      const { data: jars, error } = await sbClient
         .from('user_jars')
         .select('id, jar_name, jar_type, created_at')
         .eq('user_id', user.id)
