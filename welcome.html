@@ -406,11 +406,23 @@
         }
 
         console.log('=== Sign-up signin response ===');
+        console.log('Full sessionData:', JSON.stringify(sessionData));
         console.log('sessionData keys:', sessionData ? Object.keys(sessionData) : 'null');
         console.log('sessionData.session:', sessionData?.session);
         console.log('sessionData.user:', sessionData?.user?.email);
 
-        // The session should now be auto-saved by Supabase client
+        // Check what auth state actually is now
+        const currentSession = await sbClient.auth.getSession();
+        console.log('Current session after signin:', currentSession?.data?.session ? 'EXISTS' : 'MISSING');
+
+        // Manually ensure session is set
+        if (sessionData?.session) {
+          await sbClient.auth.setSession(sessionData.session);
+          console.log('Session manually set');
+        } else if (currentSession?.data?.session) {
+          console.log('Using session from getSession()');
+        }
+
         // Wait for it to be persisted
         await new Promise(resolve => setTimeout(resolve, 1000));
 
@@ -450,11 +462,23 @@
         }
 
         console.log('=== Sign-in response ===');
+        console.log('Full sessionData:', JSON.stringify(sessionData));
         console.log('sessionData keys:', sessionData ? Object.keys(sessionData) : 'null');
         console.log('sessionData.session:', sessionData?.session);
         console.log('sessionData.user:', sessionData?.user?.email);
 
-        // The session should now be auto-saved by Supabase client
+        // Check what auth state actually is now
+        const currentSession = await sbClient.auth.getSession();
+        console.log('Current session after signin:', currentSession?.data?.session ? 'EXISTS' : 'MISSING');
+
+        // Manually ensure session is set
+        if (sessionData?.session) {
+          await sbClient.auth.setSession(sessionData.session);
+          console.log('Session manually set');
+        } else if (currentSession?.data?.session) {
+          console.log('Using session from getSession()');
+        }
+
         // Wait for it to be persisted
         await new Promise(resolve => setTimeout(resolve, 1000));
 
