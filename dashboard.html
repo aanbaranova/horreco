@@ -1,665 +1,223 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Time Jar — Dashboard</title>
-<link rel="stylesheet" href="styles.css">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&display=swap" rel="stylesheet">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Horreco — Your Projects</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Cormorant+Garamond:ital,wght@0,500;1,400&display=swap" rel="stylesheet">
+  <style>
+    body { margin: 0; background: #f4f7f3; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    .dashboard { padding: 20px; max-width: 1200px; margin: 0 auto; }
+    .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 40px; }
+    .header h1 { margin: 0; font-family: 'Cormorant Garamond', serif; font-size: 48px; color: #2c3e2f; }
+    .back-btn { position: fixed; top: 16px; left: 16px; background: rgba(255,255,255,0.3); border: none; padding: 8px 16px; border-radius: 8px; font-size: 24px; cursor: pointer; transition: all 200ms; z-index: 100; }
+    .back-btn:hover { background: rgba(255,255,255,0.5); transform: scale(1.05); }
+    
+    .jars-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; margin-bottom: 40px; }
+    .jar-card { background: white; border-radius: 12px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 200ms; cursor: pointer; text-decoration: none; color: #2c3e2f; display: flex; flex-direction: column; }
+    .jar-card:hover { transform: translateY(-4px); box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
+    .jar-name { font-weight: 600; margin-bottom: 8px; }
+    .jar-progress { font-size: 14px; color: #666; }
+    
+    .create-jar-btn { background: #5f955f; color: white; border: none; padding: 16px 32px; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 200ms; align-self: flex-start; }
+    .create-jar-btn:hover { background: #4a7d4a; transform: scale(1.02); }
+    
+    /* Modal styles */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: none; align-items: center; justify-content: center; z-index: 1000; }
+    .modal-overlay.active { display: flex; }
+    .modal { background: white; border-radius: 20px; padding: 40px; max-width: 500px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+    .modal h2 { margin: 0 0 24px; font-family: 'Nanum Pen Script', cursive; font-size: 32px; color: #2c3e2f; }
+    .modal p { margin: 0 0 24px; color: #666; }
+    
+    .jar-picker { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
+    .jar-option { border: 2px solid #ddd; border-radius: 12px; padding: 16px; text-align: center; cursor: pointer; transition: all 200ms; background: #f9f9f9; }
+    .jar-option:hover { border-color: #5f955f; background: #f0f7f0; }
+    .jar-option.selected { border-color: #5f955f; background: #e8f5e9; }
+    .jar-option-icon { font-size: 32px; margin-bottom: 8px; }
+    .jar-option-name { font-size: 13px; font-weight: 500; color: #2c3e2f; }
+    
+    .name-input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; box-sizing: border-box; margin-bottom: 24px; }
+    .name-input:focus { outline: none; border-color: #5f955f; box-shadow: 0 0 0 3px rgba(95,149,95,0.1); }
+    
+    .modal-buttons { display: flex; gap: 12px; justify-content: flex-end; }
+    .modal-btn { padding: 12px 24px; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; transition: all 200ms; }
+    .modal-btn.cancel { background: #eee; color: #333; }
+    .modal-btn.cancel:hover { background: #ddd; }
+    .modal-btn.submit { background: #5f955f; color: white; }
+    .modal-btn.submit:hover { background: #4a7d4a; }
+  </style>
 </head>
 <body>
-  <div class="page dashboard">
-    <a class="back-btn" href="welcome.html" aria-label="Back" title="Back">&lsaquo;</a>
-    <header class="dashboard__header" style="display:flex;justify-content:space-between;align-items:center">
-      <h1 class="dashboard__title">Your projects</h1>
-      <button id="auth-btn" style="padding:10px 20px;background:#c8a882;color:white;border:none;border-radius:8px;cursor:pointer;font-weight:600">Sign In</button>
-    </header>
+  <a class="back-btn" href="welcome.html">&lsaquo;</a>
+  
+  <div class="dashboard">
+    <div class="header">
+      <h1>Your Projects</h1>
+    </div>
 
-    <main class="dashboard__grid" id="jar-grid">
-      <!-- Create new project -->
-      <button class="jar-card jar-card--new" id="create-project-btn" type="button">
-        <span class="jar-card--new__plus">+</span>
-        <span class="jar-card--new__label">Create New Project</span>
-      </button>
-    </main>
+    <div id="jars-grid" class="jars-grid">
+      <!-- Jars will load here from Supabase -->
+    </div>
+
+    <button class="create-jar-btn" onclick="openCreateModal()">+ Create New Project</button>
   </div>
 
-  <!-- Create-project modal: two-step question flow -->
-  <div class="modal" id="create-project-modal">
-    <div class="modal__card">
-      <div class="modal__step modal__step--active" data-step="1">
-        <h2 class="modal__title">What would you put in your time jar?</h2>
-        <input type="hidden" id="jar-type-select" value="flowers">
-        <div class="item-picker" role="group" aria-label="Choose what fills your jar">
-          <button class="item-picker__tile item-picker__tile--selected" type="button" data-value="flowers" title="Flowers" aria-label="Flowers" aria-pressed="true"><img src="./assets/fl_1.png" alt=""></button>
-          <button class="item-picker__tile" type="button" data-value="water" title="Water" aria-label="Water" aria-pressed="false"><span class="item-picker__drop"></span></button>
-          <button class="item-picker__tile" type="button" data-value="dandelions" title="Dandelions" aria-label="Dandelions" aria-pressed="false"><img src="./assets/dandelion_seed.png" alt=""></button>
-          <button class="item-picker__tile" type="button" data-value="feathers" title="Feathers" aria-label="Feathers" aria-pressed="false"><img src="./assets/feather_1.png" alt=""></button>
-          <button class="item-picker__tile" type="button" data-value="oranges" title="Oranges" aria-label="Oranges" aria-pressed="false"><img src="./assets/orange_slice_3d.png" alt=""></button>
-          <button class="item-picker__tile" type="button" data-value="plant" title="Plant" aria-label="Plant" aria-pressed="false"><img src="./assets/plant_eucalyptus.png" alt=""></button>
-          <button class="item-picker__tile" type="button" data-value="bamboo" title="Bamboo" aria-label="Bamboo" aria-pressed="false"><img src="./assets/plant_bamboo.png" alt=""></button>
-          <button class="item-picker__tile" type="button" data-value="maples" title="Maples" aria-label="Maples" aria-pressed="false"><img src="./assets/maple_1.png" alt=""></button>
-          <button class="item-picker__tile" type="button" data-value="cranes" title="Cranes" aria-label="Cranes" aria-pressed="false"><img src="./assets/crane_1.png" alt=""></button>
-          <button class="item-picker__tile" type="button" data-value="envelopes" title="Envelopes" aria-label="Envelopes" aria-pressed="false"><img src="./assets/envelope_2_3d.png" alt=""></button>
+  <!-- Theme Picker Modal -->
+  <div id="create-modal" class="modal-overlay">
+    <div class="modal">
+      <h2>What are you putting your time into?</h2>
+      <p>Choose a theme that fits your project:</p>
+      
+      <div class="jar-picker">
+        <div class="jar-option" data-type="flowers" onclick="selectJarType('flowers', this)">
+          <div class="jar-option-icon">🌸</div>
+          <div class="jar-option-name">Flowers</div>
         </div>
-        <div class="modal__actions">
-          <button class="btn btn-secondary" id="step1-cancel" type="button">Cancel</button>
-          <button class="btn btn-primary" id="step1-next" type="button">Next</button>
+        <div class="jar-option" data-type="maple" onclick="selectJarType('maple', this)">
+          <div class="jar-option-icon">🍂</div>
+          <div class="jar-option-name">Maple</div>
+        </div>
+        <div class="jar-option" data-type="water" onclick="selectJarType('water', this)">
+          <div class="jar-option-icon">💧</div>
+          <div class="jar-option-name">Water</div>
+        </div>
+        <div class="jar-option" data-type="dandelion" onclick="selectJarType('dandelion', this)">
+          <div class="jar-option-icon">🌼</div>
+          <div class="jar-option-name">Dandelion</div>
+        </div>
+        <div class="jar-option" data-type="feathers" onclick="selectJarType('feathers', this)">
+          <div class="jar-option-icon">🪶</div>
+          <div class="jar-option-name">Feathers</div>
+        </div>
+        <div class="jar-option" data-type="cranes" onclick="selectJarType('cranes', this)">
+          <div class="jar-option-icon">🦅</div>
+          <div class="jar-option-name">Cranes</div>
+        </div>
+        <div class="jar-option" data-type="envelopes" onclick="selectJarType('envelopes', this)">
+          <div class="jar-option-icon">✉️</div>
+          <div class="jar-option-name">Envelopes</div>
+        </div>
+        <div class="jar-option" data-type="orange" onclick="selectJarType('orange', this)">
+          <div class="jar-option-icon">🍊</div>
+          <div class="jar-option-name">Orange</div>
+        </div>
+        <div class="jar-option" data-type="plant" onclick="selectJarType('plant', this)">
+          <div class="jar-option-icon">🌿</div>
+          <div class="jar-option-name">Plant</div>
         </div>
       </div>
 
-      <div class="modal__step" data-step="2">
-        <h2 class="modal__title">What are you putting your time into?</h2>
-        <input class="modal__input" id="jar-name-input" type="text" placeholder="e.g. Deep Work" maxlength="40">
-        <div class="modal__actions">
-          <button class="btn btn-secondary" id="step2-back" type="button">Back</button>
-          <button class="btn btn-primary" id="step2-create" type="button">Create Jar</button>
-        </div>
+      <input type="text" class="name-input" id="jar-name" placeholder="e.g. Deep Work" />
+
+      <div class="modal-buttons">
+        <button class="modal-btn cancel" onclick="closeCreateModal()">Cancel</button>
+        <button class="modal-btn submit" onclick="createJar()">Create Jar</button>
       </div>
     </div>
   </div>
 
-  <style>
-    .dashboard__header {
-      padding: 32px 40px 0;
-      max-width: 900px;
-      margin-left: auto;
-      margin-right: auto;
-      box-sizing: border-box;
-      text-align: center;
-    }
-    .dashboard__title {
-      font-family: 'Nanum Pen Script', cursive;
-      font-weight: 400;
-      font-size: 44px;
-      color: #3a2e22;
-      margin: 0;
-    }
-    .dashboard__grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 20px;
-      padding: 32px 40px;
-      max-width: 1180px;
-      margin-left: auto;
-      margin-right: auto;
-      box-sizing: border-box;
-      justify-content: center;
-    }
-    body {
-      background:
-        radial-gradient(ellipse 60% 55% at 0% 0%, rgba(196,204,178,0.32), rgba(196,204,178,0) 70%),
-        radial-gradient(ellipse 55% 50% at 100% 100%, rgba(200,206,182,0.3), rgba(200,206,182,0) 70%),
-        radial-gradient(ellipse 70% 60% at 50% 45%, rgba(250,244,232,0.9), rgba(250,244,232,0) 75%),
-        #f1eadd;
-      background-attachment: fixed;
-      min-height: 100vh;
-    }
-    .dashboard__grid {
-      row-gap: 36px;
-    }
-    .jar-card {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-      padding: 24px 16px 40px;
-      background: transparent;
-      border: none;
-      border-radius: var(--radius-md);
-      color: var(--color-text);
-      cursor: pointer;
-      text-decoration: none;
-    }
-    /* one thin watercolour shelf line under each jar; neighbouring cards' lines meet across the gap */
-    .jar-card:not(.jar-card--new)::before {
-      content: '';
-      position: absolute;
-      top: 110px;
-      left: -10px;
-      right: -10px;
-      height: 7px;
-      border-radius: 40% 60% 50% 50% / 60% 40% 60% 40%;
-      background:
-        radial-gradient(ellipse 30% 100% at 30% 50%, rgba(170,145,110,0.35), rgba(170,145,110,0) 75%),
-        radial-gradient(ellipse 35% 100% at 75% 40%, rgba(160,138,104,0.3), rgba(160,138,104,0) 75%),
-        linear-gradient(180deg, rgba(190,166,130,0) 0%, rgba(182,158,122,0.45) 45%, rgba(170,146,112,0.35) 70%, rgba(190,166,130,0) 100%);
-      filter: blur(0.8px);
-      pointer-events: none;
-    }
-    .jar-card:not(.jar-card--new)::after {
-      content: '';
-      position: absolute;
-      top: 116px;
-      left: 12%;
-      right: 12%;
-      height: 10px;
-      background: radial-gradient(ellipse 50% 100% at 50% 0%, rgba(150,125,90,0.14), rgba(150,125,90,0) 75%);
-      filter: blur(2px);
-      pointer-events: none;
-    }
-    .jar-card__thumb--jar,
-    .jar-card__name,
-    .jar-card__progress {
-      position: relative;
-      z-index: 1;
-    }
-    .jar-card__name {
-      margin-top: 8px;
-    }
-    .jar-card__actions {
-      position: absolute;
-      bottom: 6px;
-      right: 8px;
-      display: flex;
-      gap: 4px;
-      z-index: 10;
-    }
-    .jar-card__action-btn {
-      width: 22px;
-      height: 22px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      line-height: 1;
-      border: 1px solid rgba(150,128,98,0.3);
-      border-radius: 50%;
-      background: rgba(255,251,243,0.7);
-      color: #8a785f;
-      cursor: pointer;
-      padding: 0;
-    }
-    .jar-card__action-btn:hover {
-      color: var(--color-primary);
-      border-color: var(--color-primary);
-    }
-    .jar-card__thumb {
-      width: 60px;
-      height: 80px;
-      background: linear-gradient(150deg, var(--color-primary-light), var(--color-primary));
-      border-radius: 8px 8px 4px 4px;
-      opacity: 0.5;
-    }
-    .jar-card__thumb--jar {
-      position: relative;
-      width: 60px;
-      height: 90px;
-      overflow: hidden;
-      opacity: 1;
-    }
-    .jar-card__name {
-      font-family: 'Nanum Pen Script', cursive;
-      font-weight: 400;
-      font-size: 24px;
-      line-height: 1.1;
-      color: #3a2e22;
-    }
-    .jar-card__progress {
-      font-family: 'Nanum Pen Script', cursive;
-      font-size: 19px;
-      line-height: 1;
-      color: #7a6a55;
-    }
-    .jar-card--new {
-      justify-content: center;
-      border: 1.5px dashed rgba(150,128,98,0.45);
-      background: transparent;
-      font-family: inherit;
-    }
-    .jar-card--new__plus {
-      font-size: 32px;
-      color: var(--color-primary);
-      line-height: 1;
-    }
-    .jar-card--new__label {
-      font-size: 14px;
-      color: var(--color-text-muted);
-    }
-  </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     const SUPABASE_URL = 'https://rkyawxfzfueqfgzgkkkt.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_29NoCpu3W89C8fueHo5_Rw_QWcnY48w';
-    let supabaseClient;
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJreWF3eGZ6ZnVlcWZnemdramt0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjQ2Njc5NDEsImV4cCI6MjA0MDI0Mzk0MX0.vgKBz3hHx8hFMJm7ux7XdX5RI5zWY85yTQJSb6s4BM8';
+
+    let supabase = null;
 
     document.addEventListener('DOMContentLoaded', function() {
       if (window.supabase && !window.horrecoSupabase) {
         window.horrecoSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
       }
-      supabaseClient = window.horrecoSupabase;
-      initAuth();
+      supabase = window.horrecoSupabase;
+      loadUserJars();
     });
 
-    async function initAuth() {
-      if (!supabaseClient) return;
-      var authBtn = document.getElementById('auth-btn');
-      var { data: { user } } = await supabaseClient.auth.getUser();
+    let selectedJarType = 'flowers';
 
-      if (user) {
-        authBtn.textContent = 'Sign Out';
-        authBtn.onclick = function() { supabaseClient.auth.signOut().then(() => { window.location.href = 'welcome.html'; }); };
-        loadUserJars();
-      } else {
-        // Not authenticated - redirect to welcome page
-        window.location.href = 'welcome.html';
+    function openCreateModal() {
+      document.getElementById('create-modal').classList.add('active');
+    }
+
+    function closeCreateModal() {
+      document.getElementById('create-modal').classList.remove('active');
+      document.getElementById('jar-name').value = '';
+      selectedJarType = 'flowers';
+      document.querySelectorAll('.jar-option').forEach(el => el.classList.remove('selected'));
+    }
+
+    function selectJarType(type, element) {
+      selectedJarType = type;
+      document.querySelectorAll('.jar-option').forEach(el => el.classList.remove('selected'));
+      element.classList.add('selected');
+    }
+
+    async function createJar() {
+      const jarName = document.getElementById('jar-name').value.trim();
+      if (!jarName) {
+        alert('Please enter a project name');
+        return;
       }
+
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        alert('Please sign in first');
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from('user_jars')
+        .insert({
+          user_id: user.id,
+          jar_name: jarName,
+          jar_type: selectedJarType,
+          created_at: new Date().toISOString()
+        })
+        .select('id')
+        .single();
+
+      if (error) {
+        console.error('Error creating jar:', error);
+        alert('Failed to create jar');
+        return;
+      }
+
+      closeCreateModal();
+      window.location.href = `jar.html?type=${selectedJarType}&id=${data.id}`;
     }
 
     async function loadUserJars() {
-      if (!supabaseClient) return;
-      var { data: { user } } = await supabaseClient.auth.getUser();
-      if (!user) return;
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        window.location.href = 'welcome.html';
+        return;
+      }
 
-      var { data: jars, error } = await supabaseClient
+      const { data: jars, error } = await supabase
         .from('user_jars')
-        .select('*')
+        .select('id, jar_name, jar_type, created_at')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
-      if (error || !jars) return;
+      if (error) {
+        console.error('Error loading jars:', error);
+        return;
+      }
 
-      var grid = document.getElementById('jar-grid');
-      var createBtn = document.getElementById('create-project-btn');
+      const grid = document.getElementById('jars-grid');
+      if (jars.length === 0) {
+        grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #666;">No projects yet. Create one to get started!</p>';
+        return;
+      }
 
-      jars.forEach(function(jar) {
-        var typeMap = { flowers: 'Flowers', water: 'Water', dandelions: 'Dandelion', feathers: 'Feathers', oranges: 'Orange', plant: 'Plant', bamboo: 'Bamboo', maples: 'Maple', cranes: 'Cranes', envelopes: 'Envelopes' };
-        var file = 'Time Jar - ' + (typeMap[jar.jar_type] || 'Flowers') + '.html';
-        var url = file + '?id=' + encodeURIComponent(jar.id);
-
-        var card = document.createElement('a');
-        card.className = 'jar-card';
-        card.href = url;
-        card.dataset.jarId = jar.id;
-        card.innerHTML =
-          '<div class="jar-card__actions">' +
-            '<button class="jar-card__action-btn" type="button" title="Rename" data-action="rename">&#9998;</button>' +
-            '<button class="jar-card__action-btn" type="button" title="Info" data-action="info">&#9432;</button>' +
-            '<button class="jar-card__action-btn" type="button" title="Reset" data-action="reset">&#8635;</button>' +
-            '<button class="jar-card__action-btn" type="button" title="Delete" data-action="delete">&#128465;</button>' +
-          '</div>' +
-          '<div class="jar-card__thumb--jar"><iframe data-src="' + url + '&thumb=1" scrolling="no" style="position:absolute;border:none;pointer-events:none;transform-origin:top left;width:400px;height:560px"></iframe></div>' +
-          '<div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;margin-top:10px;padding:7px 16px 6px;background:#f3e9d2 url(\'./assets/note_paper.png\') center/cover;transform:rotate(' + (((jar.id.length * 7) % 6) - 3) + 'deg);box-shadow:0 1px 1px rgba(90,70,45,0.12), 0 4px 8px rgba(90,70,45,0.16)">' +
-            '<div class="jar-card__name" style="margin-top:0">' + (jar.jar_name || (typeMap[jar.jar_type] || 'Jar')) + '</div>' +
-            '<div class="jar-card__progress">0m</div>' +
-          '</div>';
-
-        grid.insertBefore(card, createBtn);
-      });
+      grid.innerHTML = jars.map(jar => `
+        <a href="jar.html?type=${jar.jar_type}&id=${jar.id}" class="jar-card">
+          <div class="jar-name">${jar.jar_name}</div>
+          <div class="jar-progress">Click to continue</div>
+        </a>
+      `).join('');
     }
 
-    (function () {
-      var modal = document.getElementById('create-project-modal');
-      var steps = modal.querySelectorAll('.modal__step');
-      function showStep(n) {
-        steps.forEach(function (s) {
-          s.classList.toggle('modal__step--active', s.dataset.step === String(n));
-        });
-      }
-      function openModal() {
-        document.getElementById('jar-name-input').value = '';
-        document.getElementById('jar-type-select').value = 'flowers';
-        showStep(1);
-        modal.classList.add('modal--open');
-      }
-      function closeModal() {
-        modal.classList.remove('modal--open');
-      }
-      document.getElementById('create-project-btn').addEventListener('click', openModal);
-      document.getElementById('step1-cancel').addEventListener('click', closeModal);
-      document.getElementById('step1-next').addEventListener('click', function () {
-        showStep(2);
-        setTimeout(function () { document.getElementById('jar-name-input').focus(); }, 50);
-      });
-      document.getElementById('jar-name-input').addEventListener('keydown', function (e) {
-        if (e.key === 'Enter') document.getElementById('step2-create').click();
-      });
-      document.getElementById('step2-back').addEventListener('click', function () { showStep(1); });
-      document.getElementById('step2-create').addEventListener('click', async function () {
-        var type = document.getElementById('jar-type-select').value;
-        var name = document.getElementById('jar-name-input').value.trim();
-        if (!name) { alert('Please enter a project name'); return; }
-
-        try {
-          var { data: { user }, error: authError } = await supabaseClient.auth.getUser();
-          if (authError || !user) { alert('Please sign in first'); return; }
-
-          var { data, error } = await supabaseClient
-            .from('user_jars')
-            .insert({
-              user_id: user.id,
-              jar_name: name,
-              jar_type: type,
-              created_at: new Date().toISOString()
-            })
-            .select('id')
-            .single();
-
-          if (error) {
-            console.error('Insert error:', error);
-            alert('Failed to create jar: ' + (error.message || 'Unknown error'));
-            return;
-          }
-
-          if (!data || !data.id) {
-            alert('Failed to create jar: No ID returned');
-            return;
-          }
-
-          closeModal();
-          alert('Jar created! Reloading...');
-          location.reload();
-        } catch (err) {
-          console.error('Create jar error:', err);
-          alert('Error: ' + err.message);
-        }
-      });
-    })();
-  </script>
-<script>
-    (function () {
-      function jarStorageKey(jarId) {
-        if (jarId === 'water-jar') return 'timejar_state_deep-work-water';
-        if (jarId === 'dandelion-jar') return 'timejar_state_dandelion_v2';
-        return 'timejar_state_' + jarId;
-      }
-      function nameStorageKey(jarId) {
-        return 'timejar_name_' + jarId;
-      }
-      function startedStorageKey(jarId) {
-        return 'timejar_started_' + jarId;
-      }
-      // the card rises, blurs and fades like vapour, then the grid gap closes smoothly
-      function evaporateCard(card) {
-        card.style.pointerEvents = 'none';
-        var anim = card.animate([
-          { opacity: 1, transform: 'translateY(0) scale(1)', filter: 'blur(0px) saturate(1)' },
-          { opacity: 0.75, transform: 'translateY(-6px) scale(1.01)', filter: 'blur(1.5px) saturate(0.85)', offset: 0.3 },
-          { opacity: 0.3, transform: 'translateY(-18px) scale(1.04)', filter: 'blur(6px) saturate(0.6)', offset: 0.7 },
-          { opacity: 0, transform: 'translateY(-30px) scale(1.07)', filter: 'blur(12px) saturate(0.4)' }
-        ], { duration: 2600, easing: 'cubic-bezier(.4,0,.2,1)', fill: 'forwards' });
-        anim.onfinish = function () {
-          var grid = card.parentNode;
-          var sibs = grid ? Array.prototype.slice.call(grid.children).filter(function (c) { return c !== card; }) : [];
-          var before = sibs.map(function (c) { return c.getBoundingClientRect(); });
-          card.remove();
-          sibs.forEach(function (c, i) {
-            var after = c.getBoundingClientRect();
-            var dx = before[i].left - after.left, dy = before[i].top - after.top;
-            if (dx || dy) c.animate([{ transform: 'translate(' + dx + 'px,' + dy + 'px)' }, { transform: 'translate(0,0)' }], { duration: 700, easing: 'cubic-bezier(.16,1,.3,1)' });
-          });
-        };
-      }
-      function showConfirmPopup(message, confirmLabel, onConfirm) {
-        var old = document.getElementById('jar-info-popup');
-        if (old) old.remove();
-        if (!document.getElementById('jar-info-popup-kf')) {
-          var st = document.createElement('style');
-          st.id = 'jar-info-popup-kf';
-          st.textContent = '@keyframes timeModalIn { 0% { opacity: 0; transform: scale(0.92) translateY(10px); filter: blur(8px); } 100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); } }';
-          document.head.appendChild(st);
-        }
-        var overlay = document.createElement('div');
-        overlay.id = 'jar-info-popup';
-        overlay.style.cssText = 'position:fixed;inset:0;background:transparent;z-index:1000;display:flex;justify-content:center;align-items:center';
-        var card = document.createElement('div');
-        card.style.cssText = 'background:linear-gradient(150deg, rgba(235,250,235,0.05) 0%, rgba(195,225,205,0.03) 30%, rgba(150,195,165,0.04) 65%, rgba(110,160,130,0.06) 100%);-webkit-backdrop-filter:blur(12px) saturate(1.4);backdrop-filter:blur(12px) saturate(1.4);border:1px solid rgba(255,255,255,0.7);border-top-color:rgba(255,255,255,0.9);border-radius:20px;padding:36px 40px;text-align:center;box-shadow:0 22px 56px rgba(50,100,75,0.3), 0 1px 0 rgba(255,255,255,0.45), inset 0 4px 6px rgba(255,255,255,0.7), inset 0 -6px 10px rgba(40,80,50,0.22), inset 6px 0 7px rgba(255,255,255,0.3), inset -4px 0 6px rgba(40,80,50,0.1);max-width:340px;width:calc(100% - 48px);box-sizing:border-box;opacity:0;animation:timeModalIn 2.8s cubic-bezier(.16,1,.3,1) forwards';
-        var msg = document.createElement('p');
-        msg.style.cssText = 'font-size:14px;color:#4d6b52;margin:0 0 26px';
-        msg.textContent = message;
-        var row = document.createElement('div');
-        row.style.cssText = 'display:flex;gap:12px;justify-content:center';
-        var cancel = document.createElement('button');
-        cancel.type = 'button';
-        cancel.textContent = 'Cancel';
-        cancel.style.cssText = 'flex:1;padding:12px 20px;font-size:15px;font-weight:600;border:1px solid rgba(255,255,255,0.7);border-radius:25px;cursor:pointer;background:rgba(255,255,255,0.35);color:#4d6b52';
-        var ok = document.createElement('button');
-        ok.type = 'button';
-        ok.textContent = confirmLabel;
-        ok.style.cssText = 'flex:1;padding:12px 20px;font-size:15px;font-weight:600;color:#fff;border:none;border-radius:25px;cursor:pointer;background:linear-gradient(150deg, rgba(143,191,138,0.55) 0%, rgba(95,149,95,0.6) 100%);box-shadow:0 4px 15px rgba(90,138,90,0.25)';
-        var close = function () { overlay.remove(); document.removeEventListener('keydown', onKey); };
-        var onKey = function (e) { if (e.key === 'Escape') close(); };
-        cancel.addEventListener('click', close);
-        ok.addEventListener('click', function () { close(); onConfirm(); });
-        overlay.addEventListener('click', function (e) { if (e.target === overlay) close(); });
-        document.addEventListener('keydown', onKey);
-        row.appendChild(cancel); row.appendChild(ok);
-        card.appendChild(msg); card.appendChild(row);
-        overlay.appendChild(card);
-        document.body.appendChild(overlay);
-        cancel.focus();
-      }
-      function showInfoPopup(name, dateStr) {
-        var old = document.getElementById('jar-info-popup');
-        if (old) old.remove();
-        if (!document.getElementById('jar-info-popup-kf')) {
-          var st = document.createElement('style');
-          st.id = 'jar-info-popup-kf';
-          st.textContent = '@keyframes timeModalIn { 0% { opacity: 0; transform: scale(0.92) translateY(10px); filter: blur(8px); } 100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); } }';
-          document.head.appendChild(st);
-        }
-        var overlay = document.createElement('div');
-        overlay.id = 'jar-info-popup';
-        overlay.style.cssText = 'position:fixed;inset:0;background:transparent;z-index:1000;display:flex;justify-content:center;align-items:center';
-        var card = document.createElement('div');
-        card.style.cssText = 'background:linear-gradient(150deg, rgba(235,250,235,0.05) 0%, rgba(195,225,205,0.03) 30%, rgba(150,195,165,0.04) 65%, rgba(110,160,130,0.06) 100%);-webkit-backdrop-filter:blur(12px) saturate(1.4);backdrop-filter:blur(12px) saturate(1.4);border:1px solid rgba(255,255,255,0.7);border-top-color:rgba(255,255,255,0.9);border-radius:20px;padding:36px 40px;text-align:center;box-shadow:0 22px 56px rgba(50,100,75,0.3), 0 1px 0 rgba(255,255,255,0.45), inset 0 4px 6px rgba(255,255,255,0.7), inset 0 -6px 10px rgba(40,80,50,0.22), inset 6px 0 7px rgba(255,255,255,0.3), inset -4px 0 6px rgba(40,80,50,0.1);max-width:340px;width:calc(100% - 48px);box-sizing:border-box;opacity:0;animation:timeModalIn 2.8s cubic-bezier(.16,1,.3,1) forwards';
-        var title = document.createElement('p');
-        title.style.cssText = "font-family:'Nanum Pen Script', cursive;font-size:30px;line-height:1.1;color:#2c4a33;margin:0 0 10px";
-        title.textContent = name;
-        var msg = document.createElement('p');
-        msg.style.cssText = 'font-size:14px;color:#4d6b52;margin:0 0 26px';
-        msg.textContent = 'Started on ' + dateStr;
-        var ok = document.createElement('button');
-        ok.type = 'button';
-        ok.textContent = 'OK';
-        ok.style.cssText = 'min-width:140px;padding:12px 20px;font-size:15px;font-weight:600;color:#fff;border:none;border-radius:25px;cursor:pointer;background:linear-gradient(150deg, rgba(143,191,138,0.55) 0%, rgba(95,149,95,0.6) 100%);box-shadow:0 4px 15px rgba(90,138,90,0.25)';
-        var close = function () { overlay.remove(); document.removeEventListener('keydown', onKey); };
-        var onKey = function (e) { if (e.key === 'Escape' || e.key === 'Enter') close(); };
-        ok.addEventListener('click', close);
-        overlay.addEventListener('click', function (e) { if (e.target === overlay) close(); });
-        document.addEventListener('keydown', onKey);
-        card.appendChild(msg); card.appendChild(ok);
-        overlay.appendChild(card);
-        document.body.appendChild(overlay);
-        ok.focus();
-      }
-      document.querySelectorAll('.jar-card').forEach(function (card) {
-        var jarId = card.dataset.jarId;
-        if (!jarId) return;
-        var nameEl = card.querySelector('.jar-card__name');
-        var savedName = localStorage.getItem(nameStorageKey(jarId));
-        if (savedName && nameEl) nameEl.textContent = savedName;
-        if (!localStorage.getItem(startedStorageKey(jarId))) {
-          try { localStorage.setItem(startedStorageKey(jarId), new Date().toISOString()); } catch (e) {}
-        }
-        card.querySelectorAll('.jar-card__action-btn').forEach(function (btn) {
-          btn.addEventListener('click', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-            var action = btn.dataset.action;
-            if (action === 'rename') {
-              if (!nameEl || card.querySelector('.jar-card__rename-input')) return;
-              var current = nameEl.textContent || '';
-              var input = document.createElement('input');
-              input.type = 'text';
-              input.className = 'jar-card__rename-input';
-              input.value = current;
-              input.maxLength = 40;
-              input.style.cssText = 'width:100%;max-width:170px;box-sizing:border-box;font-family:\'Nanum Pen Script\', cursive;font-weight:400;font-size:24px;line-height:1.1;text-align:center;color:#3a2e22;padding:3px 6px;border:1px solid var(--color-primary);border-radius:6px;background:var(--color-surface);outline:none';
-              ['click', 'mousedown', 'mouseup'].forEach(function (t) {
-                input.addEventListener(t, function (ev) { ev.preventDefault && t === 'click' && ev.preventDefault(); ev.stopPropagation(); });
-              });
-              var done = false;
-              var finish = function (save) {
-                if (done) return; done = true;
-                var v = input.value.trim();
-                if (save && v) {
-                  nameEl.textContent = v;
-                  try { localStorage.setItem(nameStorageKey(jarId), v); } catch (err) {}
-                }
-                input.remove();
-                nameEl.style.display = '';
-              };
-              input.addEventListener('keydown', function (ev) {
-                ev.stopPropagation();
-                if (ev.key === 'Enter') { ev.preventDefault(); finish(true); }
-                else if (ev.key === 'Escape') { ev.preventDefault(); finish(false); }
-              });
-              input.addEventListener('blur', function () { finish(true); });
-              nameEl.style.display = 'none';
-              nameEl.parentNode.insertBefore(input, nameEl);
-              input.focus();
-              input.select();
-            } else if (action === 'info') {
-              var started = localStorage.getItem(startedStorageKey(jarId));
-              var dateStr = started ? new Date(started).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) : 'unknown';
-              showInfoPopup((nameEl && nameEl.textContent) || '', dateStr);
-            } else if (action === 'reset') {
-              showConfirmPopup('Reset this jar back to empty? This cannot be undone.', 'Reset', function () {
-                try { localStorage.removeItem(jarStorageKey(jarId)); } catch (err) {}
-                window.location.reload();
-              });
-            } else if (action === 'delete') {
-              showConfirmPopup('Delete this jar permanently? This cannot be undone.', 'Delete', function () {
-                try {
-                  localStorage.removeItem(jarStorageKey(jarId));
-                  localStorage.removeItem(nameStorageKey(jarId));
-                  localStorage.removeItem(startedStorageKey(jarId));
-                  var cl = JSON.parse(localStorage.getItem('timejar_custom_jars') || '[]') || [];
-                  localStorage.setItem('timejar_custom_jars', JSON.stringify(cl.filter(function (c) { return c.id !== jarId; })));
-                } catch (err) {}
-                evaporateCard(card);
-              });
-            }
-          });
-        });
-      });
-    })();
-  </script>
-
-  <script>
-    (function () {
-      var hidden = document.getElementById('jar-type-select');
-      var tiles = document.querySelectorAll('.item-picker__tile');
-      function select(v) {
-        hidden.value = v;
-        tiles.forEach(function (t) {
-          var on = t.dataset.value === v;
-          t.classList.toggle('item-picker__tile--selected', on);
-          t.setAttribute('aria-pressed', on ? 'true' : 'false');
-        });
-      }
-      tiles.forEach(function (t) { t.addEventListener('click', function () { select(t.dataset.value); }); });
-      document.getElementById('create-project-btn').addEventListener('click', function () { select('flowers'); });
-    })();
-  </script>
-<script>
-    /* Thumbnails are full jar pages; loading ~10 at once stalls the dashboard.
-       Load them one at a time (top of the page first) after the dashboard itself has painted. */
-    /* Item jars (flowers, seeds, feathers…) are drawn straight from their saved pile — no live
-       jar page needed, so they appear instantly. Water, plant and bamboo still use the live page. */
-    window.TIMEJAR_STATIC = {
-      'Time Jar - Flowers.dc.html':   { key: 'timejar_state_deep-work',     size: 42, sq: [0.5, 20, 24], clip: false },
-      'Time Jar - Dandelion.dc.html': { key: 'timejar_state_dandelion_v2',  size: 42, sq: [0.5, 20, 24], clip: true },
-      'Time Jar - Feathers.dc.html':  { key: 'timejar_state_feather-jar',   size: 58, sq: [0.75, 16, 24], clip: true },
-      'Time Jar - Orange.dc.html':    { key: 'timejar_state_orange-jar',    size: 46, sq: [0.45, 22, 24], clip: true },
-      'Time Jar - Maple.dc.html':     { key: 'timejar_state_maple-jar',     size: 48, sq: [0.75, 16, 24], clip: true },
-      'Time Jar - Cranes.dc.html':    { key: 'timejar_state_crane-jar',     size: 52, sq: [0.88, 10, 16, true], clip: false },
-      'Time Jar - Envelopes.dc.html': { key: 'timejar_state_envelope-jar',  size: 52, sq: [0.55, 20, 24], clip: false },
-      'Time Jar - Water.dc.html':     { key: 'timejar_state_deep-work-water', kind: 'water' },
-      'Time Jar - Plant.dc.html':     { key: 'timejar_state_plant-jar',  kind: 'plant', img: 'plant_eucalyptus.png', pos: 'left:-2px;bottom:-6px;width:112px;height:192px' },
-      'Time Jar - Bamboo.dc.html':    { key: 'timejar_state_bamboo-jar', kind: 'plant', img: 'plant_bamboo.png',     pos: 'left:36px;bottom:-4px;width:102px;height:194px' }
-    };
-    window.renderStaticThumb = function (frame) {
-      var src = frame.getAttribute('data-src') || '';
-      var file = decodeURIComponent(src.split('?')[0]);
-      var cfg = window.TIMEJAR_STATIC[file];
-      if (!cfg) return false;
-      var id = (src.match(/[?&]id=([^&]+)/) || [])[1];
-      var key = id ? 'timejar_state_' + decodeURIComponent(id) : cfg.key;
-      var data = null;
-      try { data = JSON.parse(localStorage.getItem(key) || 'null'); } catch (e) {}
-      var items = (data && Array.isArray(data.flowers)) ? data.flowers : [];
-      var thumb = frame.parentNode;
-      var k = (thumb.clientWidth || 60) / 200;
-      var box = document.createElement('div');
-      box.style.cssText = 'position:absolute;left:0;bottom:0;width:200px;height:300px;transform-origin:bottom left;transform:scale(' + k + ')';
-      var glass = "path(\'M 62,0 L 62,18 C 62,40 10,48 10,78 L 10,206 C 10,218 18,224 32,224 L 128,224 C 142,224 150,218 150,206 L 150,78 C 150,48 98,40 98,18 L 98,0 Z\')";
-      if (cfg.kind === 'plant') {
-        var mins = (data && data.roundMinutes) || 0, p = Math.min(1, mins / (200 * 60));
-        var g = p > 0 ? 0.03 + 0.97 * Math.pow(p, 1.25) : 0;
-        box.innerHTML = '<img src="./assets/bottle_soil_v2.png" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:bottom">' +
-          '<div style="position:absolute;bottom:12px;left:20px;width:160px;height:230px;clip-path:' + glass + '"><div style="position:absolute;left:0;bottom:36px;width:160px;height:194px;overflow:hidden">' +
-          '<div style="position:absolute;left:0;bottom:0;width:160px;height:194px;transform-origin:80px 100%;transform:scale(' + g.toFixed(3) + ')"><img src="./assets/' + cfg.img + '" alt="" style="position:absolute;' + cfg.pos + '"></div></div></div>';
-        thumb.replaceChild(box, frame);
-        return true;
-      }
-      if (cfg.kind === 'water') {
-        var h = (data && data.currentHeight) || 0, bubs = (data && Array.isArray(data.permanentBubbles)) ? data.permanentBubbles : [];
-        var wh = h > 0 ? Math.min(220, h + 14) : 0;
-        var bh = '';
-        for (var b = 0; b < bubs.length; b++) {
-          var u = bubs[b]; if (!u || !isFinite(u.x) || !isFinite(u.y)) continue;
-          var s = u.size || 8;
-          bh += '<div style="position:absolute;left:' + (80 + u.x - s / 2) + 'px;bottom:' + Math.max(2, u.y - 20) + 'px;width:' + s + 'px;height:' + s + 'px;border-radius:50%;background:radial-gradient(circle at 32% 30%, rgba(255,255,255,0.95), rgba(220,238,246,0.35) 55%, rgba(170,205,225,0.25));box-shadow:inset 0 0 0 1px rgba(150,190,215,0.45)"></div>';
-        }
-        box.innerHTML = '<img src="./assets/bottle_clear.png" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:bottom">' +
-          '<div style="position:absolute;bottom:12px;left:20px;width:160px;height:230px;clip-path:' + glass + '">' +
-          (wh ? '<div style="position:absolute;left:0;right:0;bottom:0;height:' + wh + 'px;background:linear-gradient(180deg, rgba(190,222,236,0.55), rgba(160,205,225,0.45));border-top:2px solid rgba(255,255,255,0.7)"></div>' : '') +
-          bh + '</div>';
-        thumb.replaceChild(box, frame);
-        return true;
-      }
-      var html = '<img src="./assets/bottle.png" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:bottom">' +
-        '<div style="position:absolute;bottom:12px;left:20px;width:160px;height:230px' + (cfg.clip ? ';clip-path:path(\'M 62,0 L 60,10 L 51,20 L 34,30 L 22,40 L 15,50 L 10,60 L 8,70 L 6,80 L 6,200 L 7,210 L 12,220 L 22,230 L 138,230 L 148,220 L 153,210 L 154,200 L 154,80 L 152,70 L 150,60 L 145,50 L 138,40 L 126,30 L 109,20 L 100,10 L 98,0 Z\')' : '') + '">';
-      var sq = cfg.sq;
-      for (var i = 0; i < items.length; i++) {
-        var f = items[i];
-        if (!f || typeof f.src !== 'string' || !isFinite(f.x) || !isFinite(f.y)) continue;
-        var r = Number(f.rot) || 0, ar = sq[3] ? Math.abs(r) : r, sc = Number(f.scale) || 1;
-        var tilt = ((ar * 7) % sq[2]) - sq[2] / 2;
-        var squash = sq[0] + ((ar * 13) % sq[1]) / 100;
-        html += '<div style="position:absolute;width:' + cfg.size + 'px;height:' + cfg.size + 'px;left:' + f.x + 'px;bottom:' + f.y +
-          'px;background:url(\'' + f.src.replace(/'/g, '') + '\') center/contain no-repeat;transform:translate(-50%,50%) rotate(' + tilt + 'deg) scale(' + sc + ',' + (sc * squash).toFixed(3) + ') rotate(' + r + 'deg)"></div>';
-      }
-      box.innerHTML = html + '</div>';
-      thumb.replaceChild(box, frame);
-      return true;
-    };
-    (function () {
-      var queue = [], busy = 0, MAX = 2;
-      function pump() {
-        while (busy < MAX && queue.length) {
-          var f = queue.shift();
-          if (!f.isConnected || f.getAttribute('src')) continue;
-          busy++;
-          var done = false;
-          var next = function () { if (done) return; done = true; busy--; pump(); };
-          f.addEventListener('load', next, { once: true });
-          setTimeout(next, 4000);
-          f.setAttribute('src', f.getAttribute('data-src'));
-        }
-      }
-      function collect() {
-        var frames = Array.prototype.slice.call(document.querySelectorAll('iframe[data-src]:not([src])'));
-        frames.sort(function (a, b) { return a.getBoundingClientRect().top - b.getBoundingClientRect().top; });
-        frames.forEach(function (f) { if (window.renderStaticThumb(f)) return; if (queue.indexOf(f) === -1) queue.push(f); });
-        pump();
-      }
-      Array.prototype.slice.call(document.querySelectorAll('iframe[data-src]:not([src])')).forEach(function (f) { window.renderStaticThumb(f); });
-      function start() { requestAnimationFrame(function () { setTimeout(collect, 50); }); }
-      if (document.readyState === 'complete') start(); else window.addEventListener('load', start);
-      var pending = false;
-      var grid = document.querySelector('.dashboard__grid') || document.body;
-      new MutationObserver(function (muts) {
-        var added = muts.some(function (m) { return Array.prototype.some.call(m.addedNodes, function (n) { return n.nodeType === 1 && (n.matches('iframe[data-src]') || n.querySelector && n.querySelector('iframe[data-src]')); }); });
-        if (!added || pending) return;
-        pending = true;
-        requestAnimationFrame(function () { pending = false; collect(); });
-      }).observe(grid, { childList: true, subtree: true });
-    })();
   </script>
 </body>
 </html>
