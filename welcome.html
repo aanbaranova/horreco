@@ -350,21 +350,9 @@
     document.addEventListener('DOMContentLoaded', function() {
       if (window.supabase) {
         sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        checkAuth();
+        // Don't auto-redirect on welcome page - let user control the flow
       }
     });
-
-    async function checkAuth() {
-      if (!sbClient) return;
-      try {
-        const { data: { session } } = await sbClient.auth.getSession();
-        if (session) {
-          window.location.href = 'dashboard.html';
-        }
-      } catch (e) {
-        console.error('Auth check failed:', e);
-      }
-    }
 
     function openAuthModal() {
       document.getElementById('auth-modal').classList.add('active');
