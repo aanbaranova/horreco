@@ -324,20 +324,18 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    (function() {
-      const SUPABASE_URL = 'https://rkyawxfzfueqfgzgkkkt.supabase.co';
-      const SUPABASE_KEY = 'sb_publishable_29NoCpu3W89C8fueHo5_Rw_QWcnY48w';
+    const SUPABASE_URL = 'https://rkyawxfzfueqfgzgkkkt.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_29NoCpu3W89C8fueHo5_Rw_QWcnY48w';
 
-      window.sbClient = null;
+    let sbClient = null;
 
-      // Initialize Supabase when the library loads
-      document.addEventListener('DOMContentLoaded', function() {
-        if (window.supabase) {
-          window.sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-          checkAuth();
-        }
-      });
-    })();
+    // Initialize Supabase when the library loads
+    document.addEventListener('DOMContentLoaded', function() {
+      if (window.supabase) {
+        sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        checkAuth();
+      }
+    });
 
     function openAuthModal() {
       document.getElementById('auth-modal').classList.add('active');
@@ -355,9 +353,9 @@
     }
 
     async function checkAuth() {
-      if (!window.sbClient) return;
+      if (!sbClient) return;
       try {
-        const { data: { session } } = await window.sbClient.auth.getSession();
+        const { data: { session } } = await sbClient.auth.getSession();
         if (session) {
           window.location.href = 'dashboard.html';
         }
@@ -367,7 +365,7 @@
     }
 
     async function handleSignup() {
-      if (!window.sbClient) {
+      if (!sbClient) {
         alert('Supabase is still loading. Please try again.');
         return;
       }
@@ -381,7 +379,7 @@
       }
 
       try {
-        const { data, error } = await window.sbClient.auth.signUp({ email, password });
+        const { data, error } = await sbClient.auth.signUp({ email, password });
         if (error) {
           errorEl.textContent = error.message;
           return;
@@ -393,7 +391,7 @@
     }
 
     async function handleSignin() {
-      if (!window.sbClient) {
+      if (!sbClient) {
         alert('Supabase is still loading. Please try again.');
         return;
       }
@@ -407,7 +405,7 @@
       }
 
       try {
-        const { data, error } = await window.sbClient.auth.signInWithPassword({ email, password });
+        const { data, error } = await sbClient.auth.signInWithPassword({ email, password });
         if (error) {
           errorEl.textContent = error.message;
           return;
