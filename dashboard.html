@@ -143,8 +143,11 @@
     let selectedJarType = 'flowers';
 
     function openCreateModal() {
-      document.getElementById('create-modal').classList.add('active');
-    }
+  const modal = document.getElementById('create-modal');
+  console.log('Opening modal, element:', modal);
+  modal.classList.add('active');
+  console.log('Modal classes:', modal.className);
+}
 
     function closeCreateModal() {
       document.getElementById('create-modal').classList.remove('active');
