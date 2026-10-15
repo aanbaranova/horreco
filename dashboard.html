@@ -25,8 +25,7 @@
     .create-jar-btn:hover { background: #4a7d4a; transform: scale(1.02); }
     
     /* Modal styles */
-    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: none; align-items: center; justify-content: center; z-index: 1000; }
-    .modal-overlay.active { display: flex; }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); align-items: center; justify-content: center; z-index: 1000; }
     .modal { background: white; border-radius: 20px; padding: 40px; max-width: 500px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
     .modal h2 { margin: 0 0 24px; font-family: 'Nanum Pen Script', cursive; font-size: 32px; color: #2c3e2f; }
     .modal p { margin: 0 0 24px; color: #666; }
@@ -65,11 +64,11 @@
   </div>
 
   <!-- Theme Picker Modal -->
-  <div id="create-modal" class="modal-overlay">
-    <div class="modal">
+  <div id="create-modal" class="modal-overlay" style="display: none;">
+    <div class="modal" style="position: relative; z-index: 1001;">
       <h2>What are you putting your time into?</h2>
       <p>Choose a theme that fits your project:</p>
-      
+
       <div class="jar-picker">
         <div class="jar-option" data-type="flowers" onclick="selectJarType('flowers', this)">
           <div class="jar-option-icon">🌸</div>
@@ -143,14 +142,12 @@
     let selectedJarType = 'flowers';
 
     function openCreateModal() {
-  const modal = document.getElementById('create-modal');
-  console.log('Opening modal, element:', modal);
-  modal.classList.add('active');
-  console.log('Modal classes:', modal.className);
-}
+      const modal = document.getElementById('create-modal');
+      modal.style.display = 'flex';
+    }
 
     function closeCreateModal() {
-      document.getElementById('create-modal').classList.remove('active');
+      document.getElementById('create-modal').style.display = 'none';
       document.getElementById('jar-name').value = '';
       selectedJarType = 'flowers';
       document.querySelectorAll('.jar-option').forEach(el => el.classList.remove('selected'));
@@ -169,11 +166,15 @@
         return;
       }
 
-      const { data: { user } } = await sbClient.auth.getUser();
-      if (!user) {
+      const { data: { user }, error: userError } = await sbClient.auth.getUser();
+      if (userError || !user) {
+        console.error('User error:', userError);
         alert('Please sign in first');
         return;
       }
+
+      console.log('Creating jar for user:', user.id);
+      console.log('User session:', user);
 
       const { data, error } = await sbClient
         .from('user_jars')
@@ -188,10 +189,13 @@
 
       if (error) {
         console.error('Error creating jar:', error);
-        alert('Failed to create jar');
+        console.error('Error status:', error.status);
+        console.error('Error code:', error.code);
+        alert('Failed to create jar: ' + error.message);
         return;
       }
 
+      console.log('Jar created successfully:', data);
       closeCreateModal();
       window.location.href = `jar.html?type=${selectedJarType}&id=${data.id}`;
     }
