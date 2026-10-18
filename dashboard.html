@@ -136,13 +136,13 @@
 
     function openCreateModal() {
       const modal = document.getElementById('create-modal');
-      modal.style.display = 'flex !important';
-      console.log('Modal opened, display:', modal.style.display);
+      modal.style.setProperty('display', 'flex', 'important');
+      console.log('Modal opened, display:', window.getComputedStyle(modal).display);
     }
 
     function closeCreateModal() {
       const modal = document.getElementById('create-modal');
-      modal.style.display = 'none !important';
+      modal.style.setProperty('display', 'none', 'important');
       document.getElementById('jar-name').value = '';
       selectedJarType = 'flowers';
       document.querySelectorAll('.jar-option').forEach(el => el.classList.remove('selected'));
