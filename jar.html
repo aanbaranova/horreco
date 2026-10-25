@@ -1,68 +1,565 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Time Jar</title>
-  <style>
-    body { margin: 0; background: #f4f7f3; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
-    #jar-container { width: 100%; min-height: 100vh; }
-    .loading { display: flex; align-items: center; justify-content: center; height: 100vh; color: #666; }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./support.js"></script>
+<style>
+  body { margin: 0; }
+  @keyframes timeModalIn { 0% { opacity: 0; transform: scale(0.92) translateY(10px); filter: blur(8px); } 100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); } }
+
+  #page { width: 100%; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; background: #efe6d4; isolation: isolate; font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; overflow: auto; position: relative; }
+
+  #backdrop { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; background: radial-gradient(ellipse 60% 50% at 18% 22%, rgba(165,185,150,0.55), rgba(165,185,150,0) 70%), radial-gradient(ellipse 55% 45% at 85% 30%, rgba(160,178,192,0.45), rgba(160,178,192,0) 70%), radial-gradient(ellipse 60% 50% at 78% 85%, rgba(232,214,160,0.55), rgba(232,214,160,0) 70%), radial-gradient(ellipse 55% 45% at 12% 88%, rgba(178,190,160,0.45), rgba(178,190,160,0) 70%), #efe6d4; }
+
+  #backdrop > div:first-child { position: absolute; inset: -60px; filter: blur(11px) saturate(0.55) sepia(0.18); opacity: 0.6; }
+  #backdrop img { position: absolute; }
+
+  #backdrop > div:last-of-type { position: absolute; inset: 0; background: rgba(245,236,218,0.28); }
+
+  #backLink { position: fixed; top: 16px; left: 16px; min-width: 44px; min-height: 44px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; padding: 4px 16px 8px; font-size: 34px; line-height: 1; font-weight: 400; color: #4a3b2c; background: rgba(255,255,255,0.3); border: none; border-radius: 8px; text-decoration: none; cursor: pointer; transition: all 200ms ease; z-index: 900; }
+  #backLink:hover { background: rgba(255,255,255,0.5); transform: scale(1.05); }
+
+  #container { position: relative; width: 400px; height: 560px; background: transparent; border-radius: 20px; box-shadow: none; }
+
+  #timeNote { position: absolute; top: 18px; left: 50%; transform: translateX(-50%) rotate(-5deg); width: 132px; height: 84px; display: flex; align-items: center; justify-content: center; background: radial-gradient(ellipse 90% 70% at 28% 22%, rgba(255,253,245,0.35) 0%, rgba(255,253,245,0) 70%), url('./assets/note_paper.png') center / cover, #ece3cf; border-radius: 1px; box-shadow: inset -1px -1px 0 rgba(150,130,95,0.35), inset 1px 1px 0 rgba(255,255,255,0.5), 1px 1px 0 rgba(170,150,115,0.55), 2px 2px 0 rgba(150,130,95,0.35), 3px 10px 14px -4px rgba(70,55,35,0.32); z-index: 200; font-family: 'Nanum Pen Script',cursive; font-size: 34px; line-height: 1; color: #2b2622; letter-spacing: 0.5px; }
+
+  #jarWrapper { position: absolute; bottom: 60px; left: 50%; transform: translateX(-50%); width: 200px; height: 300px; z-index: 2; }
+  #jarBottle { position: relative; display: block; width: 100%; height: 100%; object-fit: contain; object-position: bottom; pointer-events: none; z-index: 1; }
+  #flowerLayer { position: absolute; bottom: 12px; left: 20px; width: 160px; height: 230px; z-index: 3; overflow: visible; }
+  #jarClip { position: absolute; bottom: 12px; left: 20px; width: 160px; height: 230px; z-index: 4; pointer-events: none; clip-path: path('M 62,0 L 62,18 C 62,40 10,48 10,78 L 10,206 C 10,218 18,224 32,224 L 128,224 C 142,224 150,218 150,206 L 150,78 C 150,48 98,40 98,18 L 98,0 Z'); background: radial-gradient(ellipse 42% 5% at 50% 94%, rgba(255,255,255,0.3), rgba(255,255,255,0) 100%), linear-gradient(90deg, rgba(255,255,255,0) 19%, rgba(255,255,255,0.42) 22.5%, rgba(255,255,255,0.16) 26%, rgba(255,255,255,0) 30%), linear-gradient(90deg, rgba(255,255,255,0) 81%, rgba(255,255,255,0.32) 84%, rgba(255,255,255,0) 86.5%), linear-gradient(90deg, rgba(110,165,135,0.38) 6%, rgba(150,195,170,0.1) 17%, rgba(170,210,185,0.05) 50%, rgba(150,195,170,0.1) 83%, rgba(110,165,135,0.38) 94%); }
+
+  #addTimeBtn { position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); padding: 12px 26px; font-family: 'Nanum Pen Script',cursive; font-size: 26px; line-height: 1; color: #2b2622; letter-spacing: 0.5px; background: radial-gradient(ellipse 90% 70% at 28% 22%, rgba(255,253,245,0.35) 0%, rgba(255,253,245,0) 70%), url('./assets/note_paper.png') center / cover, #ece3cf; border: 1px solid rgba(150,130,95,0.35); border-radius: 2px; cursor: pointer; box-shadow: inset 1px 1px 0 rgba(255,255,255,0.5), 1px 1px 0 rgba(170,150,115,0.45), 2px 6px 10px -4px rgba(70,55,35,0.28); transition: transform .2s, box-shadow .2s; z-index: 100; }
+  #addTimeBtn:hover { transform: translateX(-50%) translateY(-1px); box-shadow: inset 1px 1px 0 rgba(255,255,255,0.5), 1px 1px 0 rgba(170,150,115,0.45), 3px 9px 14px -4px rgba(70,55,35,0.34); }
+
+  #timeModal, #milestoneModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: transparent; z-index: 1000; display: none; justify-content: center; align-items: center; }
+  #timeModal.show, #milestoneModal.show { display: flex; }
+
+  .modal-content { border-radius: 20px; padding: 40px; text-align: center; max-width: 380px; width: calc(100% - 48px); box-sizing: border-box; }
+
+  #timeModalContent { background: linear-gradient(150deg, rgba(235,250,235,0.05) 0%, rgba(195,225,205,0.03) 30%, rgba(150,195,165,0.04) 65%, rgba(110,160,130,0.06) 100%); backdrop-filter: blur(24px) saturate(1.8); border: 1px solid rgba(255,255,255,0.85); border-top-color: rgba(255,255,255,1); box-shadow: 0 28px 70px rgba(50,100,75,0.45); opacity: 0; animation: timeModalIn 2.8s cubic-bezier(.16,1,.3,1) forwards; }
+
+  #milestoneModalContent { background: linear-gradient(150deg, rgba(239,230,212,0.62) 0%, rgba(165,185,150,0.34) 100%); backdrop-filter: blur(14px) saturate(1.3); border: 1px solid rgba(255,255,255,0.7); border-top-color: rgba(255,255,255,0.9); box-shadow: 0 24px 60px rgba(74,83,68,0.3), inset 0 4px 6px rgba(255,255,255,0.6), inset 0 -6px 10px rgba(83,93,75,0.15); }
+
+  .modal-p { font-size: 14px; color: #4d6b52; margin: 0 0 24px; }
+  .modal-h2 { font-family: 'Nanum Pen Script', cursive; font-weight: 400; font-size: 44px; line-height: 1; margin: 0 0 12px; color: rgb(53,59,48); }
+
+  .time-inputs { display: flex; gap: 16px; justify-content: center; margin-bottom: 26px; }
+  .time-input-group { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+  .time-input-label { font-size: 12px; color: #4d6b52; font-weight: 600; }
+  .time-input-field { width: 90px; padding: 10px 12px; font-size: 16px; border: 1px solid #ddd; border-radius: 10px; outline: none; color: #2c4a33; }
+
+  .modal-buttons { display: flex; gap: 12px; justify-content: center; }
+  .modal-btn { flex: 1; padding: 12px 20px; font-size: 15px; font-weight: 600; border: none; border-radius: 25px; cursor: pointer; }
+  .modal-btn.cancel { background: #f0f0f0; color: #555; }
+  .modal-btn.cancel:hover { background: #e0e0e0; }
+  .modal-btn.submit { color: #fff; background: linear-gradient(150deg, rgba(143,191,138,0.55) 0%, rgba(95,149,95,0.6) 100%); box-shadow: 0 4px 15px rgba(90,138,90,0.25); }
+  .modal-btn.submit:hover { opacity: 0.9; }
+
+  .modal-btn.white { background: rgba(255,255,255,0.45); color: rgb(53,59,48); border: 1px solid rgba(255,255,255,0.75); }
+  .modal-btn.dark { background: rgba(99,111,90,0.88); color: #fff; }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div id="jar-container" class="loading">Loading your jar...</div>
 
-  <script>
-    // Map jar type to HTML file
-    const jarTypes = {
-      'flowers': 'Time Jar - Flowers.html',
-      'maple': 'Time Jar - Maple.html',
-      'water': 'Time Jar - Water.html',
-      'dandelion': 'Time Jar - Dandelion.html',
-      'feathers': 'Time Jar - Feathers.html',
-      'cranes': 'Time Jar - Cranes.html',
-      'envelopes': 'Time Jar - Envelopes.html',
-      'orange': 'Time Jar - Orange.html',
-      'bamboo': 'Time Jar - Bamboo.html',
-      'plant': 'Time Jar - Plant.html'
-    };
+<div id="page">
+  <div id="backdrop">
+    <div>
+      <img src="./assets/fl_2.png" alt="" style="left:-6%;top:-8%;width:46vmax;transform:rotate(-18deg)">
+      <img src="./assets/fl_5.png" alt="" style="right:-10%;top:-4%;width:40vmax;transform:rotate(24deg)">
+      <img src="./assets/fl_7.png" alt="" style="left:-8%;bottom:-12%;width:42vmax;transform:rotate(12deg)">
+      <img src="./assets/fl_3.png" alt="" style="right:-6%;bottom:-10%;width:44vmax;transform:rotate(-30deg)">
+      <img src="./assets/fl_6.png" alt="" style="left:38%;top:-18%;width:26vmax;transform:rotate(40deg);opacity:0.7">
+      <img src="./assets/fl_1.png" alt="" style="left:30%;bottom:-20%;width:24vmax;transform:rotate(-8deg);opacity:0.65">
+    </div>
+    <div></div>
+    <div style="position:absolute;inset:0;background:radial-gradient(ellipse 75% 70% at 50% 50%, rgba(80,60,35,0) 55%, rgba(80,60,35,0.22) 100%)"></div>
+  </div>
 
-    // Get jar type from URL
-    const params = new URLSearchParams(window.location.search);
-    const jarType = params.get('type') || 'flowers';
-    const jarId = params.get('id');
+  <a id="backLink" href="dashboard.html" aria-label="Back to projects" title="Back">&lsaquo;</a>
 
-    if (!jarTypes[jarType]) {
-      document.getElementById('jar-container').innerHTML = `<p>Jar type not found. <a href="dashboard.html">Back to dashboard</a></p>`;
-    } else {
-      // Load the appropriate jar HTML
-      const jarFile = jarTypes[jarType];
-      fetch(jarFile)
-        .then(response => {
-          if (!response.ok) throw new Error('Failed to load jar');
-          return response.text();
-        })
-        .then(html => {
-          const container = document.getElementById('jar-container');
-          container.classList.remove('loading');
-          container.innerHTML = html;
+  <div id="container">
+    <div id="timeNote"></div>
+    <div id="jarWrapper">
+      <img id="jarBottle" src="./assets/bottle.png" alt="jar">
+      <div id="flowerLayer"></div>
+      <div id="jarClip"></div>
+    </div>
+    <button id="addTimeBtn">Add Time</button>
+  </div>
 
-          // If there's an id parameter, pass it to the jar's storage
-          if (jarId) {
-            // The jar pages check URL params for custom storage keys
-            // They'll use the id parameter automatically
-          }
-        })
-        .catch(err => {
-          console.error('Error loading jar:', err);
-          document.getElementById('jar-container').innerHTML = `
-            <div style="text-align: center; padding: 40px;">
-              <p>Error loading jar. Please <a href="dashboard.html">go back to dashboard</a></p>
-            </div>
-          `;
-        });
+  <!-- Time Modal -->
+  <div id="timeModal" class="modal-show">
+    <div id="timeModalContent" class="modal-content">
+      <p class="modal-p">How much time did you give yourself to bloom?</p>
+      <div class="time-inputs">
+        <div class="time-input-group">
+          <label class="time-input-label">Hours</label>
+          <input id="hoursInput" type="number" min="0" placeholder="0" class="time-input-field">
+        </div>
+        <div class="time-input-group">
+          <label class="time-input-label">Minutes</label>
+          <input id="minutesInput" type="number" min="0" placeholder="0" class="time-input-field">
+        </div>
+      </div>
+      <div class="modal-buttons">
+        <button id="cancelTimeBtn" class="modal-btn cancel">Cancel</button>
+        <button id="submitTimeBtn" class="modal-btn submit">Add</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Milestone Modal -->
+  <div id="milestoneModal">
+    <div id="milestoneModalContent" class="modal-content">
+      <h2 class="modal-h2" id="milestoneTitle"></h2>
+      <p class="modal-p" id="milestoneMessage"></p>
+      <div class="modal-buttons">
+        <button id="startNewRoundBtn" class="modal-btn white">Start New Round</button>
+        <button id="continueRoundBtn" class="modal-btn dark">Keep Going</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://rkyawxfzfueqfgzgkkkt.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_29NoCpu3W89C8fueHo5_Rw_QWcnY48w';
+
+let sbClient;
+let jarData = null;
+let currentRoundFlowers = 0;
+let totalMinutesInvested = 0;
+let roundMinutes = 0;
+let carryMinutes = 0;
+let compressedCount = 0;
+let pileBase = 0;
+let rowQueues = {};
+let showMilestoneModal = false;
+let popupTimer = null;
+
+const GRID_COLS = 5;
+const CELL_W = 32;
+const PILE_HEIGHT = 230;
+const milestoneTarget = 400;
+const rowsNeeded = Math.ceil(milestoneTarget / GRID_COLS);
+const CELL_H = Math.max(6, Math.min(15, PILE_HEIGHT / rowsNeeded));
+const TOTAL_ROWS = Math.floor(PILE_HEIGHT / CELL_H);
+
+const flowerImages = [
+  './assets/fl_1.png', './assets/fl_2.png', './assets/fl_3.png', './assets/fl_4.png',
+  './assets/fl_5.png', './assets/fl_6.png', './assets/fl_7.png', './assets/fl_8.png',
+];
+
+document.addEventListener('DOMContentLoaded', async () => {
+  initSupabase();
+});
+
+async function initSupabase() {
+  const options = {
+    auth: {
+      storage: localStorage,
+      autoRefreshToken: true,
+      persistSession: true,
+      detectSessionInUrl: false
     }
-  </script>
+  };
+  sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, options);
+
+  const params = new URLSearchParams(window.location.search);
+  const jarId = params.get('id');
+  const jarType = params.get('type');
+
+  if (!jarId) {
+    window.location.href = 'dashboard.html';
+    return;
+  }
+
+  try {
+    const { data: { user } } = await sbClient.auth.getUser();
+    if (!user) {
+      window.location.href = 'welcome.html';
+      return;
+    }
+
+    const { data: jar, error } = await sbClient
+      .from('user_jars')
+      .select('*')
+      .eq('id', jarId)
+      .eq('user_id', user.id)
+      .single();
+
+    if (error || !jar) {
+      window.location.href = 'dashboard.html';
+      return;
+    }
+
+    jarData = { id: jarId, name: jar.custom_name, type: jarType };
+    const storageKey = `timejar_state_${jarId}`;
+    restoreState(storageKey);
+    setupEventListeners();
+    updateUI();
+  } catch (e) {
+    console.error('Error:', e);
+    window.location.href = 'dashboard.html';
+  }
+}
+
+function restoreState(storageKey) {
+  let raw;
+  try { raw = localStorage.getItem(storageKey); } catch (e) { raw = null; }
+  if (!raw || raw.length > 200000) return;
+
+  let data;
+  try { data = JSON.parse(raw); } catch (e) { data = null; }
+  if (!data || data.v !== 2 || !Array.isArray(data.flowers)) return;
+
+  currentRoundFlowers = data.currentRoundFlowers || 0;
+  totalMinutesInvested = data.totalMinutesInvested || 0;
+  roundMinutes = data.roundMinutes || 0;
+  carryMinutes = data.carryMinutes || 0;
+  compressedCount = data.compressedCount || 0;
+  pileBase = data.pileBase || 0;
+
+  const flowerLayer = document.getElementById('flowerLayer');
+  data.flowers.slice(0, milestoneTarget + 60).forEach((f) => {
+    if (!f || typeof f.src !== 'string') return;
+    const node = makeFlowerNode(f.src, { x: f.x, y: f.y }, f.rot, f.scale || 1);
+    node.dataset.landed = '1';
+    flowerLayer.appendChild(node);
+  });
+
+  const full = roundMinutes >= milestoneTarget * 30;
+  if (full && window.location.search.indexOf('thumb=1') === -1) {
+    showMilestoneModal = true;
+  }
+}
+
+function saveState() {
+  const storageKey = `timejar_state_${jarData.id}`;
+  const layer = document.getElementById('flowerLayer');
+  const flowers = Array.from(layer.children).map(n => ({
+    src: n.dataset.src, x: +n.dataset.x, y: +n.dataset.y, rot: n.dataset.rot, scale: +n.dataset.scale || 1,
+  }));
+  const fillPercent = Math.min(100, Math.round((currentRoundFlowers / milestoneTarget) * 100));
+  const data = {
+    v: 2, flowers, currentRoundFlowers, roundMinutes, carryMinutes,
+    compressedCount, pileBase, totalMinutesInvested, fillPercent,
+  };
+  try { localStorage.setItem(storageKey, JSON.stringify(data)); } catch (e) {}
+}
+
+function setupEventListeners() {
+  document.getElementById('addTimeBtn').addEventListener('click', openTimeModal);
+  document.getElementById('cancelTimeBtn').addEventListener('click', closeTimeModal);
+  document.getElementById('submitTimeBtn').addEventListener('click', submitTime);
+  document.getElementById('startNewRoundBtn').addEventListener('click', startNewRound);
+  document.getElementById('continueRoundBtn').addEventListener('click', continueRound);
+}
+
+function openTimeModal() {
+  if (!showMilestoneModal) {
+    document.getElementById('timeModal').classList.add('show');
+  }
+}
+
+function closeTimeModal() {
+  document.getElementById('timeModal').classList.remove('show');
+  document.getElementById('hoursInput').value = '';
+  document.getElementById('minutesInput').value = '';
+}
+
+function submitTime() {
+  const mins = parseInt(document.getElementById('minutesInput').value, 10) || 0;
+  const hrs = parseInt(document.getElementById('hoursInput').value, 10) || 0;
+  closeTimeModal();
+  addMinutes(hrs * 60 + mins);
+}
+
+function addMinutes(entered) {
+  if (!(entered > 0)) return;
+  const cap = milestoneTarget * 30;
+  const room = Math.max(0, cap - (roundMinutes || 0));
+  const totalMinutes = Math.min(entered, room);
+  carryMinutes = (carryMinutes || 0) + (entered - totalMinutes);
+
+  if (totalMinutes <= 0) { saveState(); showMilestone(); return; }
+
+  totalMinutesInvested = (totalMinutesInvested || 0) + totalMinutes;
+  const target = milestoneTarget;
+  const before = roundMinutes || 0;
+  roundMinutes = before + totalMinutes;
+
+  const reached = roundMinutes >= target * 30;
+  const flowerCount = Math.max(Math.max(1, Math.ceil(totalMinutes / 30)), reached ? target - currentRoundFlowers : 0);
+
+  if (flowerCount === 0 && reached) { showMilestone(); return; }
+  if (flowerCount === 0) return;
+
+  const shown = Math.min(flowerCount, 60);
+  for (let i = 0; i < flowerCount - shown; i++) placeInstant();
+  for (let i = 0; i < shown; i++) setTimeout(() => addFlower(), i * 350);
+  saveState();
+
+  if (roundMinutes >= target * 30) {
+    const wait = shown ? (shown - 1) * 350 + 6300 + 600 : 300;
+    clearTimeout(popupTimer);
+    popupTimer = setTimeout(() => showMilestone(), wait);
+  }
+}
+
+function placeInstant() {
+  const layerEl = document.getElementById('flowerLayer');
+  if (!layerEl) return;
+  const spot = randomSpot(currentRoundFlowers);
+  const src = flowerImages[Math.floor(Math.random() * flowerImages.length)];
+  const node = makeFlowerNode(src, spot, Math.round(Math.random() * 360), +(0.88 + Math.random() * 0.2).toFixed(2));
+  node.dataset.landed = '1';
+  layerEl.appendChild(node);
+  currentRoundFlowers++;
+}
+
+function addFlower() {
+  if (showMilestoneModal) return;
+  if (currentRoundFlowers >= milestoneTarget + 60) return;
+
+  const spot = randomSpot(currentRoundFlowers);
+  const src = flowerImages[Math.floor(Math.random() * flowerImages.length)];
+  const rot = Math.round(Math.random() * 360);
+  const scale = +(0.88 + Math.random() * 0.2).toFixed(2);
+  const node = makeFlowerNode(src, spot, rot, scale);
+
+  const targetY = spot.y;
+  const localX = spot.x;
+  const layerOffsetBottom = 12, layerOffsetLeft = 20;
+  const finalBottom = targetY + layerOffsetBottom;
+  const finalLeft = localX + layerOffsetLeft;
+  const neckX = 100;
+  const outerWrap = document.getElementById('jarWrapper');
+  const dropStart = 470;
+  const neckExit = Math.max(finalBottom + 10, 205);
+
+  node.style.left = neckX + 'px';
+  node.style.bottom = dropStart + 'px';
+  node.style.opacity = '0';
+  node.style.zIndex = '2';
+  outerWrap.appendChild(node);
+
+  const fr = Number(rot) || 0;
+  const fTilt = ((fr * 7) % 24) - 12;
+  const fSquash = 0.5 + ((fr * 13) % 20) / 100;
+  const tf = (tilt, sx, sy, r) => `translate(-50%, 50%) rotate(${tilt}deg) scale(${sx.toFixed(3)}, ${sy.toFixed(3)}) rotate(${r}deg)`;
+
+  const frames = [
+    { left: neckX + 'px', bottom: dropStart + 'px', opacity: 0, offset: 0, transform: tf(0, 0.72, 0.72, fr * 0.1) },
+    { left: neckX + 'px', bottom: dropStart + 'px', opacity: 1, offset: 0.03, transform: tf(0, 0.72, 0.72, fr * 0.1) },
+  ];
+
+  const neckOffset = Math.min(0.97, Math.max(0.04, 0.03 + 0.97 * (dropStart - neckExit) / Math.max(1, dropStart - finalBottom)));
+  frames.push({ left: neckX + 'px', bottom: neckExit + 'px', opacity: 1, offset: neckOffset, transform: tf(0, 0.72, 0.72, fr * 0.3) });
+
+  const steps = 6;
+  for (let k = 1; k <= steps; k++) {
+    const t = k / steps;
+    const e = t * t * (3 - 2 * t);
+    const sx = 0.72 + (scale - 0.72) * e;
+    const sy = 0.72 + (scale * fSquash - 0.72) * e;
+    frames.push({
+      left: (neckX + (finalLeft - neckX) * e).toFixed(2) + 'px',
+      bottom: (neckExit + (finalBottom - neckExit) * t).toFixed(2) + 'px',
+      opacity: 1,
+      offset: k === steps ? 1 : neckOffset + (1 - neckOffset) * t,
+      transform: tf(fTilt * e, sx, sy, fr * (0.3 + 0.7 * e)),
+    });
+  }
+
+  const anim = node.animate(frames, { duration: 6200, easing: 'linear', fill: 'forwards' });
+  const land = () => {
+    if (node.dataset.landed) return;
+    node.dataset.landed = '1';
+    node.style.left = localX + 'px';
+    node.style.bottom = targetY + 'px';
+    node.style.opacity = '1';
+    node.style.zIndex = '';
+    node.style.transform = flatTransform(rot, scale);
+    anim.cancel();
+    if (node.parentElement) node.remove();
+    const flowerLayer = document.getElementById('flowerLayer');
+    if (flowerLayer) flowerLayer.appendChild(node);
+    saveState();
+  };
+  if (anim.finished && anim.finished.then) anim.finished.then(land).catch(land);
+  else anim.onfinish = land;
+  setTimeout(land, 6300);
+  currentRoundFlowers++;
+}
+
+function randomSpot(index) {
+  const R = 12, W = 160;
+  const lane = nextCell(index) % GRID_COLS;
+  const base = Math.max(16, pileBase || 0);
+  let y = base + (index / milestoneTarget) * (205 - base) + (Math.random() - 0.5) * 10;
+  y = Math.max(14, Math.min(205, y));
+  let half = y < 30 ? 44 + (y - 6) * 0.45 : 55;
+  if (y > 165) half = Math.max(16, 55 - (y - 165) * 1.0);
+  const minX = W / 2 - half, maxX = W / 2 + half;
+  const x = minX + ((lane + 0.15 + Math.random() * 0.7) / GRID_COLS) * (maxX - minX);
+  return { x: Math.round(x), y: Math.round(y) };
+}
+
+function nextCell(chronologicalIndex) {
+  const row = Math.floor(chronologicalIndex / GRID_COLS) % TOTAL_ROWS;
+  if (!rowQueues[row] || !rowQueues[row].length) {
+    const cols = Array.from({ length: GRID_COLS }, (_, i) => i);
+    for (let i = cols.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [cols[i], cols[j]] = [cols[j], cols[i]];
+    }
+    rowQueues[row] = cols;
+  }
+  const col = rowQueues[row].pop();
+  return row * GRID_COLS + col;
+}
+
+function flatTransform(rot, scale) {
+  const r = Number(rot) || 0;
+  const tilt = ((r * 7) % 24) - 12;
+  const squash = 0.5 + ((r * 13) % 20) / 100;
+  return `translate(-50%, 50%) rotate(${tilt}deg) scale(${scale}, ${(scale * squash).toFixed(3)}) rotate(${r}deg)`;
+}
+
+function makeFlowerNode(src, spot, rot, scale) {
+  const x = spot.x, y = spot.y;
+  scale = scale || 1;
+  const el = document.createElement('div');
+  el.dataset.src = src;
+  el.dataset.x = x;
+  el.dataset.y = y;
+  el.dataset.rot = rot;
+  el.dataset.scale = scale;
+  el.style.position = 'absolute';
+  el.style.width = '42px';
+  el.style.height = '42px';
+  el.style.left = x + 'px';
+  el.style.bottom = y + 'px';
+  el.style.transform = flatTransform(rot, scale);
+  el.style.backgroundImage = `url('${src}')`;
+  el.style.backgroundSize = 'contain';
+  el.style.backgroundRepeat = 'no-repeat';
+  el.style.backgroundPosition = 'center';
+  el.style.filter = 'drop-shadow(1px 2px 2px rgba(0,0,0,0.18))';
+  return el;
+}
+
+function formatTimeLabel(totalMinutes) {
+  const h = Math.floor(totalMinutes / 60);
+  const m = totalMinutes % 60;
+  return h <= 0 ? `${m}m` : `${h}h ${m}m`;
+}
+
+function updateUI() {
+  document.getElementById('timeNote').textContent = formatTimeLabel(totalMinutesInvested || 0);
+
+  if (showMilestoneModal) {
+    showMilestone();
+  }
+}
+
+function showMilestone() {
+  showMilestoneModal = true;
+  const milestoneTarget = 400;
+  const totalMinutes = totalMinutesInvested || 0;
+  const roundsCompleted = Math.max(1, Math.floor(totalMinutes / (milestoneTarget * 30)));
+  const hoursPerMilestone = (milestoneTarget * 30) / 60;
+  const totalHours = Math.round(roundsCompleted * hoursPerMilestone);
+
+  const milestoneMessages = {
+    200: "You\'ve started something real!",
+    400: 'Your time is taking shape.',
+    600: 'Look how much time you\'ve made visible.',
+    800: 'There\'s a lot of life in here now.',
+    1000: 'More of your life has found its place here.'
+  };
+
+  const rotatingMessages = [
+    'Your collection keeps growing.',
+    'Another layer has been added.',
+    'Your jar keeps telling its story.',
+    'Still gathering, piece by piece.'
+  ];
+
+  const milestoneMessage = milestoneMessages[totalHours] ||
+    rotatingMessages[Math.max(0, Math.round((totalHours - 1200) / 200)) % 4];
+
+  document.getElementById('milestoneTitle').textContent = `${totalHours} hours`;
+  document.getElementById('milestoneMessage').textContent = milestoneMessage;
+  document.getElementById('milestoneModal').classList.add('show');
+}
+
+function startNewRound() {
+  const carry = carryMinutes || 0;
+  if (carry > 0) {
+    setTimeout(() => {
+      if ((carryMinutes || 0) !== carry) return;
+      carryMinutes = 0;
+      addMinutes(carry);
+    }, 900);
+  }
+  const layer = document.getElementById('flowerLayer');
+  Array.from(layer.children).forEach(n => n.remove());
+  currentRoundFlowers = 0;
+  roundMinutes = 0;
+  rowQueues = {};
+  compressedCount = 0;
+  pileBase = 0;
+  showMilestoneModal = false;
+  document.getElementById('milestoneModal').classList.remove('show');
+  saveState();
+}
+
+function continueRound() {
+  const carry = carryMinutes || 0;
+  if (carry > 0) {
+    setTimeout(() => {
+      if ((carryMinutes || 0) !== carry) return;
+      carryMinutes = 0;
+      addMinutes(carry);
+    }, 3600);
+  }
+  currentRoundFlowers = 0;
+  roundMinutes = Math.max(0, (roundMinutes || 0) - (milestoneTarget * 30));
+  rowQueues = {};
+  showMilestoneModal = false;
+  document.getElementById('milestoneModal').classList.remove('show');
+
+  const layer = document.getElementById('flowerLayer');
+  if (!layer) return;
+  const nodes = Array.from(layer.children);
+  compressedCount = nodes.length;
+  const floor = 14, top = 205, ratio = 0.22;
+  pileBase = floor + ((pileBase || floor) - floor) * ratio + (top - floor) * ratio * (1 - ((pileBase || floor) - floor) / (top - floor));
+  pileBase = Math.min(90, Math.max(floor + 20, pileBase));
+  const baseTop = pileBase;
+
+  setTimeout(() => {
+    nodes.forEach(n => {
+      const oy = +n.dataset.y || floor, ox = +n.dataset.x || 80;
+      const ny = floor + (oy - floor) * ((baseTop - floor) / (top - floor));
+      let half = ny < 30 ? 44 + (ny - 6) * 0.45 : 55;
+      const nx = Math.max(80 - half, Math.min(80 + half, ox));
+      n.animate([{ left: ox + 'px', bottom: oy + 'px' }, { left: nx + 'px', bottom: ny + 'px' }],
+        { duration: 2400, easing: 'cubic-bezier(.45,0,.25,1)' });
+      n.style.left = nx + 'px';
+      n.style.bottom = ny + 'px';
+      n.dataset.x = Math.round(nx);
+      n.dataset.y = Math.round(ny);
+    });
+    saveState();
+  }, 700);
+}
+</script>
 </body>
 </html>
