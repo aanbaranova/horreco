@@ -221,7 +221,7 @@
 
         grid.innerHTML = jars.map(jar => `
           <a href="jar.html?type=${jar.jar_type}&id=${jar.id}" class="jar-card">
-          <div class="jar-name">${jar.custom_name}</div>
+            <div class="jar-name">${jar.custom_name}</div>
             <div class="jar-progress">Click to continue</div>
           </a>
         `).join('');
