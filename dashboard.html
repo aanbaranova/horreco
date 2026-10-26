@@ -227,6 +227,73 @@
       return h <= 0 ? `${m}m` : `${h}h ${m}m`;
     }
 
+    // Draws each jar's contents from its saved state, the same way the Claude Design dashboard does
+    const THUMB_ITEMS = {
+      flowers:   { size: 42, sq: [0.5, 20, 24], clip: false },
+      dandelion: { size: 42, sq: [0.5, 20, 24], clip: true },
+      feathers:  { size: 58, sq: [0.75, 16, 24], clip: true },
+      orange:    { size: 46, sq: [0.45, 22, 24], clip: true },
+      maple:     { size: 48, sq: [0.75, 16, 24], clip: true },
+      cranes:    { size: 52, sq: [0.88, 10, 16, true], clip: false },
+      envelopes: { size: 52, sq: [0.55, 20, 24], clip: false }
+    };
+    const THUMB_PLANTS = {
+      plant:  { img: 'plant_eucalyptus.png', pos: 'left:-2px;bottom:-6px;width:112px;height:192px' },
+      bamboo: { img: 'plant_bamboo.png', pos: 'left:36px;bottom:-4px;width:102px;height:194px' }
+    };
+    const GLASS_CLIP = "path('M 62,0 L 62,18 C 62,40 10,48 10,78 L 10,206 C 10,218 18,224 32,224 L 128,224 C 142,224 150,218 150,206 L 150,78 C 150,48 98,40 98,18 L 98,0 Z')";
+    const ITEM_CLIP = "path('M 62,0 L 60,10 L 51,20 L 34,30 L 22,40 L 15,50 L 10,60 L 8,70 L 6,80 L 6,200 L 7,210 L 12,220 L 22,230 L 138,230 L 148,220 L 153,210 L 154,200 L 154,80 L 152,70 L 150,60 L 145,50 L 138,40 L 126,30 L 109,20 L 100,10 L 98,0 Z')";
+
+    function drawJarThumb(thumb, type, id) {
+      let data = null;
+      try { data = JSON.parse(localStorage.getItem('timejar_state_' + id) || 'null'); } catch (e) {}
+      const k = (thumb.clientWidth || 60) / 200;
+      const box = document.createElement('div');
+      box.style.cssText = `position:absolute;left:0;bottom:0;width:200px;height:300px;transform-origin:bottom left;transform:scale(${k})`;
+
+      if (type === 'water') {
+        const h = (data && data.currentHeight) || 0;
+        const wh = h > 0 ? Math.min(220, h + 14) : 0;
+        const bubs = (data && Array.isArray(data.permanentBubbles)) ? data.permanentBubbles : [];
+        let bh = '';
+        for (const u of bubs) {
+          if (!u || !isFinite(u.x) || !isFinite(u.y)) continue;
+          const s = u.size || 8;
+          bh += `<div style="position:absolute;left:${80 + u.x - s / 2}px;bottom:${Math.max(2, u.y - 20)}px;width:${s}px;height:${s}px;border-radius:50%;background:radial-gradient(circle at 32% 30%, rgba(255,255,255,0.95), rgba(220,238,246,0.35) 55%, rgba(170,205,225,0.25));box-shadow:inset 0 0 0 1px rgba(150,190,215,0.45)"></div>`;
+        }
+        box.innerHTML = '<img src="assets/bottle_clear.png" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:bottom">' +
+          `<div style="position:absolute;bottom:12px;left:20px;width:160px;height:230px;clip-path:${GLASS_CLIP}">` +
+          (wh ? `<div style="position:absolute;left:0;right:0;bottom:0;height:${wh}px;background:linear-gradient(180deg, rgba(190,222,236,0.55), rgba(160,205,225,0.45));border-top:2px solid rgba(255,255,255,0.7)"></div>` : '') +
+          bh + '</div>';
+      } else if (THUMB_PLANTS[type]) {
+        const cfg = THUMB_PLANTS[type];
+        const mins = (data && data.roundMinutes) || 0;
+        const p = Math.min(1, mins / (200 * 60));
+        const g = p > 0 ? 0.03 + 0.97 * Math.pow(p, 1.25) : 0;
+        box.innerHTML = '<img src="assets/bottle_soil_v2.png" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:bottom">' +
+          `<div style="position:absolute;bottom:12px;left:20px;width:160px;height:230px;clip-path:${GLASS_CLIP}"><div style="position:absolute;left:0;bottom:36px;width:160px;height:194px;overflow:hidden">` +
+          `<div style="position:absolute;left:0;bottom:0;width:160px;height:194px;transform-origin:80px 100%;transform:scale(${g.toFixed(3)})"><img src="assets/${cfg.img}" alt="" style="position:absolute;${cfg.pos}"></div></div></div>`;
+      } else {
+        const cfg = THUMB_ITEMS[type] || THUMB_ITEMS.flowers;
+        const items = (data && Array.isArray(data.flowers)) ? data.flowers : [];
+        const sq = cfg.sq;
+        let html = '<img src="assets/bottle.png" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:bottom">' +
+          `<div style="position:absolute;bottom:12px;left:20px;width:160px;height:230px${cfg.clip ? ';clip-path:' + ITEM_CLIP : ''}">`;
+        for (const f of items) {
+          if (!f || typeof f.src !== 'string' || !isFinite(f.x) || !isFinite(f.y)) continue;
+          const r = Number(f.rot) || 0;
+          const ar = sq[3] ? Math.abs(r) : r;
+          const sc = Number(f.scale) || 1;
+          const tilt = ((ar * 7) % sq[2]) - sq[2] / 2;
+          const squash = sq[0] + ((ar * 13) % sq[1]) / 100;
+          html += `<div style="position:absolute;width:${cfg.size}px;height:${cfg.size}px;left:${f.x}px;bottom:${f.y}px;background:url('${f.src.replace(/'/g, '')}') center/contain no-repeat;transform:translate(-50%,50%) rotate(${tilt}deg) scale(${sc}, ${(sc * squash).toFixed(3)}) rotate(${r}deg)"></div>`;
+        }
+        box.innerHTML = html + '</div>';
+      }
+      thumb.innerHTML = '';
+      thumb.appendChild(box);
+    }
+
     function escapeHtml(s) {
       return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
     }
@@ -337,12 +404,7 @@
         const tilt = NOTE_TILTS[i % NOTE_TILTS.length];
         return `
           <div class="jar-card" role="link" tabindex="0" data-id="${escapeHtml(jar.id)}" data-name="${escapeHtml(jar.custom_name)}" data-created="${escapeHtml(jar.created_at || '')}" data-href="${jarPage(jar.jar_type)}?id=${jar.id}">
-            <div class="jar-card__thumb--jar">
-              <img class="jar-card__thumb-bottle" src="assets/bottle.png" alt="">
-              <div class="jar-card__thumb-flowers-clip" style="height:${p.percent}%">
-                <img class="jar-card__thumb-flowers" src="assets/jar-thumb-flowers-full.png" alt="">
-              </div>
-            </div>
+            <div class="jar-card__thumb--jar" data-thumb-type="${escapeHtml(jar.jar_type)}" data-thumb-id="${escapeHtml(jar.id)}"></div>
             <div class="jar-card__note" style="transform:rotate(${tilt}deg)">
               <div class="jar-card__name">${escapeHtml(jar.custom_name)}</div>
               <div class="jar-card__progress">${formatTimeLabel(p.minutes)}</div>
@@ -357,6 +419,7 @@
       }).join('');
 
       grid.innerHTML = cards || '<p class="empty-msg">No projects yet. Create one to get started!</p>';
+      grid.querySelectorAll('[data-thumb-type]').forEach(el => drawJarThumb(el, el.dataset.thumbType, el.dataset.thumbId));
     }
   </script>
 </body>
