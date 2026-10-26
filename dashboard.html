@@ -366,7 +366,10 @@
         if (action === 'reset') {
           jarPopup({
             title: 'Reset this jar?', message: 'Reset this jar back to empty? This cannot be undone.', okLabel: 'Reset',
-            onOk: (_, close) => {
+            onOk: async (_, close) => {
+              const { data: { user } } = await sbClient.auth.getUser();
+              const { error } = await sbClient.from('user_jars').update({ state: null }).eq('id', id).eq('user_id', user.id);
+              if (error) { alert('Could not reset: ' + error.message); return; }
               try { localStorage.removeItem(`timejar_state_${id}`); } catch (err) {}
               close();
               window.location.reload();
@@ -390,6 +393,26 @@
       });
     }
 
+    // Progress lives in the user's account, so it shows the same on every device.
+    // Jars with progress saved only on this device (from before this change) are uploaded once.
+    async function syncProgress(jars) {
+      for (const jar of jars) {
+        const key = `timejar_state_${jar.id}`;
+        try {
+          if (jar.state) {
+            localStorage.setItem(key, JSON.stringify(jar.state));
+          } else {
+            const local = localStorage.getItem(key);
+            if (local) {
+              const state = JSON.parse(local);
+              await sbClient.from('user_jars').update({ state }).eq('id', jar.id);
+              jar.state = state;
+            }
+          }
+        } catch (e) {}
+      }
+    }
+
     async function renderJars(userId) {
       const grid = document.getElementById('jars-grid');
       const { data: jars, error } = await sbClient
@@ -398,6 +421,7 @@
         .eq('user_id', userId)
         .order('created_at', { ascending: false });
       if (error) { console.error('Error loading jars:', error); return; }
+      await syncProgress(jars || []);
 
       const cards = (jars || []).map((jar, i) => {
         const p = readJarProgress(jar.id);
