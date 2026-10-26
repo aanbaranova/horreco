@@ -7,7 +7,7 @@
     if (document.getElementById('jar-phone-fix')) return;
     var style = document.createElement('style');
     style.id = 'jar-phone-fix';
-    style.textContent = '@media (max-width: 600px) { div[style*="position: fixed"] > div { width: calc(100% - 48px) !important; max-width: 380px !important; box-sizing: border-box !important; } }';
+    style.textContent = 'html, body { overflow-x: hidden !important; max-width: 100% !important; } @media (max-width: 600px) { div[style*="position: fixed"] > div { width: calc(100% - 48px) !important; max-width: 380px !important; box-sizing: border-box !important; } }';
     (document.head || document.documentElement).appendChild(style);
   }
   ensureStyle();
