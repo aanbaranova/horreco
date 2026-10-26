@@ -1,32 +1,5 @@
 // Saves each jar's progress to the user's account, so it shows the same on every device.
 // Loaded in the head of every jar page. Does not change the design.
-// Phone layout: keep popups inside the screen with a margin on both sides,
-// and make the page colour reach the top and bottom edges (no white bands in the browser toolbars).
-(function () {
-  function ensureStyle() {
-    if (document.getElementById('jar-phone-fix')) return;
-    var style = document.createElement('style');
-    style.id = 'jar-phone-fix';
-    style.textContent = 'html, body { overflow-x: hidden !important; max-width: 100% !important; } @media (max-width: 600px) { div[style*="position: fixed"] > div { width: calc(100% - 48px) !important; max-width: 380px !important; box-sizing: border-box !important; } }';
-    (document.head || document.documentElement).appendChild(style);
-  }
-  ensureStyle();
-  document.addEventListener('click', ensureStyle, true);
-  function matchPageColour() {
-    var root = Array.prototype.find.call(document.querySelectorAll('div'), function (d) {
-      return /min-height:\s*100vh/.test(d.getAttribute('style') || '');
-    });
-    var c = root ? getComputedStyle(root).backgroundColor : '';
-    if (!c || c === 'rgba(0, 0, 0, 0)') c = '#efe6d4';
-    document.documentElement.style.background = c;
-    if (document.body) document.body.style.background = c;
-  }
-  document.addEventListener('DOMContentLoaded', function () {
-    setTimeout(function () { ensureStyle(); matchPageColour(); }, 300);
-    setTimeout(function () { ensureStyle(); matchPageColour(); }, 1500);
-  });
-})();
-
 (function () {
   var SUPABASE_URL = 'https://rkyawxfzfueqfgzgkkkt.supabase.co';
   var KEY = 'sb_publishable_29NoCpu3W89C8fueHo5_Rw_QWcnY48w';
