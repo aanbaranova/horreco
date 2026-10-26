@@ -115,7 +115,10 @@
 
     // Which page each theme opens. Flowers uses jar.html (the version confirmed working).
     function jarPage(type) {
-      return 'jar.html'; // temporary: every jar opens the working Flowers page until the other themes are confirmed
+      // Flowers keeps jar.html (confirmed working). Other themes use the existing "Time Jar - <Theme>.html" files in the repo.
+      if (type === 'flowers') return 'jar.html';
+      const names = { water: 'Water', dandelion: 'Dandelion', feathers: 'Feathers', orange: 'Orange', plant: 'Plant', bamboo: 'Bamboo', maple: 'Maple', cranes: 'Cranes', envelopes: 'Envelopes' };
+      return `Time Jar - ${names[type]}.html`;
     }
 
     let sbClient;
