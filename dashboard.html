@@ -113,6 +113,11 @@
     ];
     const NOTE_TILTS = [-3, 2, -2, 1.5, -1];
 
+    // Which page each theme opens. Flowers uses jar.html (the version confirmed working).
+    function jarPage(type) {
+      return 'jar.html'; // temporary: every jar opens the working Flowers page until the other themes are confirmed
+    }
+
     let sbClient;
     let selectedTheme = null;
 
@@ -181,8 +186,15 @@
         .insert({ user_id: user.id, custom_name: name, jar_type: selectedTheme, created_at: new Date().toISOString() })
         .select('id')
         .single();
-      if (error) { alert('Failed to create jar: ' + error.message); return; }
-      window.location.href = `jar-${selectedTheme}.html?id=${data.id}`;
+      if (error) {
+        if (error.code === '23505' || /duplicate key/i.test(error.message)) {
+          alert('You already have a jar called "' + name + '". Please choose a different name.');
+        } else {
+          alert('Failed to create jar: ' + error.message);
+        }
+        return;
+      }
+      window.location.href = `${jarPage(selectedTheme)}?id=${data.id}`;
     }
 
     // Progress shown on each jar comes from the same saved state the jar page writes
@@ -217,7 +229,7 @@
         const p = readJarProgress(jar.id);
         const tilt = NOTE_TILTS[i % NOTE_TILTS.length];
         return `
-          <a class="jar-card" href="jar-${jar.jar_type}.html?id=${jar.id}">
+          <a class="jar-card" href="${jarPage(jar.jar_type)}?id=${jar.id}">
             <div class="jar-card__thumb--jar">
               <img class="jar-card__thumb-bottle" src="assets/bottle.png" alt="">
               <div class="jar-card__thumb-flowers-clip" style="height:${p.percent}%">
