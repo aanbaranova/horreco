@@ -36,6 +36,13 @@
 
     .empty-msg { grid-column: 1 / -1; text-align: center; color: #7a6a55; }
 
+    /* Card actions (rename, info, reset, delete) — same look as Claude Design */
+    .jar-card__actions { position: absolute; bottom: 6px; right: 8px; display: flex; gap: 4px; z-index: 10; }
+    .jar-card__action-btn { width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 12px; line-height: 1; border: 1px solid rgba(150,128,98,0.3); border-radius: 50%; background: rgba(255,251,243,0.7); color: #8a785f; cursor: pointer; padding: 0; }
+    .jar-card__action-btn:hover { color: #5f955f; border-color: #5f955f; }
+    .popup-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.25); display: flex; align-items: center; justify-content: center; z-index: 9998; }
+    .popup-msg { font-size: 14px; color: #4d6b52; margin: 0 0 24px; }
+
     /* Create-jar popup: theme first, then name (same order and look as Claude Design) */
     #create-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.25); display: none; align-items: center; justify-content: center; z-index: 9999; }
     #create-modal.show { display: flex; }
@@ -133,6 +140,7 @@
       if (!user) { window.location.href = 'welcome.html'; return; }
 
       renderThemeGrid();
+      setupCardActions();
       document.getElementById('open-create').addEventListener('click', openCreateModal);
       document.getElementById('theme-cancel').addEventListener('click', closeCreateModal);
       document.getElementById('theme-next').addEventListener('click', goToNameStep);
@@ -219,6 +227,102 @@
       return h <= 0 ? `${m}m` : `${h}h ${m}m`;
     }
 
+    function escapeHtml(s) {
+      return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    // Small popup used for rename, info, reset and delete
+    function jarPopup({ title, message, withInput, inputValue, okLabel, onOk }) {
+      document.querySelectorAll('.popup-overlay').forEach(el => el.remove());
+      const overlay = document.createElement('div');
+      overlay.className = 'popup-overlay';
+      const buttons = okLabel
+        ? `<button class="modal-btn secondary" data-cancel type="button">Cancel</button><button class="modal-btn primary" data-ok type="button">${escapeHtml(okLabel)}</button>`
+        : `<button class="modal-btn primary" data-ok type="button">OK</button>`;
+      overlay.innerHTML = `
+        <div class="modal-card">
+          <h2 class="modal-title">${escapeHtml(title)}</h2>
+          ${message ? `<p class="popup-msg">${escapeHtml(message)}</p>` : ''}
+          ${withInput ? `<input class="name-input" type="text" maxlength="40" value="${escapeHtml(inputValue || '')}">` : ''}
+          <div class="modal-actions">${buttons}</div>
+        </div>`;
+      const close = () => overlay.remove();
+      const okBtn = overlay.querySelector('[data-ok]');
+      const input = overlay.querySelector('input');
+      const cancelBtn = overlay.querySelector('[data-cancel]');
+      if (cancelBtn) cancelBtn.addEventListener('click', close);
+      overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+      okBtn.addEventListener('click', () => onOk(input ? input.value.trim() : null, close));
+      if (input) input.addEventListener('keydown', e => { if (e.key === 'Enter') okBtn.click(); });
+      document.body.appendChild(overlay);
+      (input || okBtn).focus();
+    }
+
+    // Card buttons: rename, info, reset, delete. Clicking the card itself opens the jar.
+    function setupCardActions() {
+      document.getElementById('jars-grid').addEventListener('click', async e => {
+        const card = e.target.closest('.jar-card[data-id]');
+        if (!card) return;
+        const btn = e.target.closest('[data-action]');
+        if (!btn) { window.location.href = card.dataset.href; return; }
+        e.stopPropagation();
+        const id = card.dataset.id;
+        const name = card.dataset.name;
+        const action = btn.dataset.action;
+
+        if (action === 'info') {
+          const started = card.dataset.created
+            ? new Date(card.dataset.created).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })
+            : 'unknown';
+          jarPopup({ title: name, message: 'Started on ' + started, onOk: (_, close) => close() });
+        }
+
+        if (action === 'rename') {
+          jarPopup({
+            title: 'Rename your jar', withInput: true, inputValue: name, okLabel: 'Save',
+            onOk: async (value, close) => {
+              if (!value || value === name) { close(); return; }
+              const { data: { user } } = await sbClient.auth.getUser();
+              const { error } = await sbClient.from('user_jars').update({ custom_name: value }).eq('id', id).eq('user_id', user.id);
+              if (error) {
+                alert((error.code === '23505' || /duplicate key/i.test(error.message))
+                  ? 'You already have a jar called "' + value + '". Please choose a different name.'
+                  : 'Could not rename: ' + error.message);
+                return;
+              }
+              close();
+              await renderJars(user.id);
+            }
+          });
+        }
+
+        if (action === 'reset') {
+          jarPopup({
+            title: 'Reset this jar?', message: 'Reset this jar back to empty? This cannot be undone.', okLabel: 'Reset',
+            onOk: (_, close) => {
+              try { localStorage.removeItem(`timejar_state_${id}`); } catch (err) {}
+              close();
+              window.location.reload();
+            }
+          });
+        }
+
+        if (action === 'delete') {
+          jarPopup({
+            title: 'Delete this jar?', message: 'Delete this jar permanently? This cannot be undone.', okLabel: 'Delete',
+            onOk: async (_, close) => {
+              const { data: { user } } = await sbClient.auth.getUser();
+              const { error } = await sbClient.from('user_jars').delete().eq('id', id).eq('user_id', user.id);
+              if (error) { alert('Could not delete: ' + error.message); return; }
+              try { localStorage.removeItem(`timejar_state_${id}`); } catch (err) {}
+              close();
+              await renderJars(user.id);
+            }
+          });
+        }
+      });
+    }
+
     async function renderJars(userId) {
       const grid = document.getElementById('jars-grid');
       const { data: jars, error } = await sbClient
@@ -232,7 +336,7 @@
         const p = readJarProgress(jar.id);
         const tilt = NOTE_TILTS[i % NOTE_TILTS.length];
         return `
-          <a class="jar-card" href="${jarPage(jar.jar_type)}?id=${jar.id}">
+          <div class="jar-card" role="link" tabindex="0" data-id="${escapeHtml(jar.id)}" data-name="${escapeHtml(jar.custom_name)}" data-created="${escapeHtml(jar.created_at || '')}" data-href="${jarPage(jar.jar_type)}?id=${jar.id}">
             <div class="jar-card__thumb--jar">
               <img class="jar-card__thumb-bottle" src="assets/bottle.png" alt="">
               <div class="jar-card__thumb-flowers-clip" style="height:${p.percent}%">
@@ -240,10 +344,16 @@
               </div>
             </div>
             <div class="jar-card__note" style="transform:rotate(${tilt}deg)">
-              <div class="jar-card__name">${jar.custom_name}</div>
+              <div class="jar-card__name">${escapeHtml(jar.custom_name)}</div>
               <div class="jar-card__progress">${formatTimeLabel(p.minutes)}</div>
             </div>
-          </a>`;
+            <div class="jar-card__actions">
+              <button class="jar-card__action-btn" type="button" title="Rename" data-action="rename">&#9998;</button>
+              <button class="jar-card__action-btn" type="button" title="Info" data-action="info">&#9432;</button>
+              <button class="jar-card__action-btn" type="button" title="Reset" data-action="reset">&#8635;</button>
+              <button class="jar-card__action-btn" type="button" title="Delete" data-action="delete">&#128465;</button>
+            </div>
+          </div>`;
       }).join('');
 
       grid.innerHTML = cards || '<p class="empty-msg">No projects yet. Create one to get started!</p>';
