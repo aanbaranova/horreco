@@ -1,3 +1,20 @@
+// Page colour fills the top and bottom edges (no lines in the browser toolbars). Colour only, no layout changes.
+(function () {
+  function matchPageColour() {
+    var root = Array.prototype.find.call(document.querySelectorAll('div'), function (d) {
+      return /min-height:\s*100vh/.test(d.getAttribute('style') || '');
+    });
+    var c = root ? getComputedStyle(root).backgroundColor : '';
+    if (!c || c === 'rgba(0, 0, 0, 0)') c = '#efe6d4';
+    document.documentElement.style.backgroundColor = c;
+    if (document.body) document.body.style.backgroundColor = c;
+  }
+  document.addEventListener('DOMContentLoaded', function () {
+    setTimeout(matchPageColour, 300);
+    setTimeout(matchPageColour, 1500);
+  });
+})();
+
 // Saves each jar's progress to the user's account, so it shows the same on every device.
 // Loaded in the head of every jar page. Does not change the design.
 (function () {
