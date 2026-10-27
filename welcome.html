@@ -366,8 +366,14 @@
       }
     });
 
+    // If the user is already signed in, go straight to their projects; otherwise show sign up / sign in
     function openAuthModal() {
-      document.getElementById('auth-modal').classList.add('active');
+      const showModal = () => document.getElementById('auth-modal').classList.add('active');
+      if (!sbClient) { showModal(); return; }
+      sbClient.auth.getUser().then(({ data }) => {
+        if (data && data.user) { window.location.href = 'dashboard.html'; }
+        else { showModal(); }
+      }).catch(showModal);
     }
 
     function closeAuthModal() {
