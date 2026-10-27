@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#dccbb1">
+<meta name="theme-color" content="#ebe0ca">
 <title>Horreco</title>
 <link rel="stylesheet" href="styles.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,6 +17,7 @@
       <div class="welcome__haze"></div>
       <div class="welcome__vignette"></div>
     </div>
+    <div class="welcome__edge" aria-hidden="true"></div>
 
 
     <img class="welcome__watch" id="watch" src="assets/pocket_watch.png" alt="Vintage pocket watch">
@@ -96,6 +97,7 @@
       inset: 0;
       background: radial-gradient(ellipse 75% 70% at 50% 50%, rgba(80,60,35,0) 55%, rgba(80,60,35,0.2) 100%);
     }
+    .welcome__edge { position: absolute; left: 0; right: 0; bottom: 0; height: 16%; pointer-events: none; background: linear-gradient(to bottom, rgba(248,244,235,0), #f8f4eb); }
     .welcome__drift { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
     .drift-p { position: absolute; left: 0; top: 0; width: 26px; height: 26px; margin: -13px 0 0 -13px; will-change: transform, opacity; }
     .drift-p__num, .drift-p__fl { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
