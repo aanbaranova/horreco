@@ -1,3 +1,19 @@
+// Extends the painted background past the bottom of the screen, so it can show under Safari's toolbar.
+(function () {
+  function ensureBgStyle() {
+    if (document.getElementById('jar-bg-extend')) return;
+    var st = document.createElement('style');
+    st.id = 'jar-bg-extend';
+    st.textContent = 'div[aria-hidden="true"][style*="position: fixed"][style*="inset: 0px"] { bottom: -220px !important; }';
+    (document.head || document.documentElement).appendChild(st);
+  }
+  ensureBgStyle();
+  document.addEventListener('DOMContentLoaded', function () {
+    setTimeout(ensureBgStyle, 300);
+    setTimeout(ensureBgStyle, 1500);
+  });
+})();
+
 // Page colour fills the top and bottom edges (no lines in the browser toolbars). Colour only, no layout changes.
 (function () {
   function matchPageColour() {
@@ -8,6 +24,10 @@
     if (!c || c === 'rgba(0, 0, 0, 0)') c = '#efe6d4';
     document.documentElement.style.backgroundColor = c;
     if (document.body) document.body.style.backgroundColor = c;
+    // Safari colours its top and bottom bars from this tag
+    var meta = document.querySelector('meta[name="theme-color"]');
+    if (!meta) { meta = document.createElement('meta'); meta.name = 'theme-color'; document.head.appendChild(meta); }
+    meta.content = c;
   }
   document.addEventListener('DOMContentLoaded', function () {
     setTimeout(matchPageColour, 300);
